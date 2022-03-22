@@ -1,19 +1,19 @@
 {
-  "name": "_name_",
+  "name": "AuD-2022-H07",
   "assignmentIds": [
-    "h_id_"
+    "h07"
   ],
   "sourceSets": [
     {
       "name": "grader",
       "files": [
-        "h_id_/H_id__RubricProvider.java"
+        "h07/H07_RubricProvider.java"
       ]
     },
     {
       "name": "solution",
       "files": [
-        "h_id_/Main.java"
+        "h07/Main.java"
       ]
     }
   ]

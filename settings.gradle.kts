@@ -1,1 +1,1 @@
-rootProject.name = "_name_-Root"
+rootProject.name = "AuD-2022-H07-Root"
