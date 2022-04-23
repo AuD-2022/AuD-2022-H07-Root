@@ -1,5 +1,7 @@
 package h07;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 public class Point2D {
@@ -33,7 +35,7 @@ public class Point2D {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point2D point2D = (Point2D) o;

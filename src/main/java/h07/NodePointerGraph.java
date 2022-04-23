@@ -1,5 +1,8 @@
 package h07;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,8 +12,9 @@ public class NodePointerGraph<L, D> implements NodePointer<L, D> {
     private final HashMap<GraphNode<L>, NodePointerGraph<L, D>> existingNodePointers;
     private final HashMap<GraphArc<L>, ArcPointerGraph<L, D>> existingArcPointers;
     private final GraphNode<L> graphNode;
-    private D distance;
-    private NodePointer<L, D> predecessor;
+
+    private @Nullable D distance;
+    private @Nullable NodePointer<L, D> predecessor;
 
     /**
      * Erzeugt einen Verweis auf einen Knoten eines Graphen.
@@ -29,22 +33,22 @@ public class NodePointerGraph<L, D> implements NodePointer<L, D> {
 	}
 
 	@Override
-	public D getDistance() {
+	public @Nullable D getDistance() {
 		return distance;
 	}
 
 	@Override
-	public void setDistance(D distance) {
+	public void setDistance(@NotNull D distance) {
 		this.distance = distance;
 	}
 
 	@Override
-	public NodePointer<L, D> getPredecessor() {
+	public @Nullable NodePointer<L, D> getPredecessor() {
 		return predecessor;
 	}
 
 	@Override
-	public void setPredecessor(NodePointer<L, D> predecessor) {
+	public void setPredecessor(@NotNull NodePointer<L, D> predecessor) {
 		this.predecessor = predecessor;
 	}
 

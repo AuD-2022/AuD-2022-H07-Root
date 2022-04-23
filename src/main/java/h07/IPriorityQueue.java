@@ -1,5 +1,7 @@
 package h07;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Comparator;
 
 public interface IPriorityQueue<T> {
@@ -15,16 +17,16 @@ public interface IPriorityQueue<T> {
      * Die Elemente dahinter rücken entsprechend in der Reihenfolge um eins vor.
      * Die Methode hat keine Auswirkungen und gibt null zurück, falls das Element nicht in der Queue sein sollte.
 	 * @param item Das zu löschende Element.
-	 * @return Das gelöschte Element. Null falls kein Element gelöscht wurde.
+	 * @return Das gelöschte Element. Null, falls kein Element gelöscht wurde.
 	 */
-	T delete(T item);
+    @Nullable T delete(T item);
 
 	/**
 	 * Gibt das vorderste Element aus der Queue zurück.
      * Die Methode hat keine Auswirkungen und gibt null zurück, falls das Element nicht in der Queue sein sollte.
 	 * @return Das vorderste Element der Queue, oder null, falls kein Element in der Queue sein sollte.
 	 */
-	T getFront();
+    @Nullable T getFront();
 
 	/**
 	 * Gibt das vorderste Element aus der Queue zurück und löscht es dabei.
@@ -32,7 +34,7 @@ public interface IPriorityQueue<T> {
      * Die Methode hat keine Auswirkungen und gibt null zurück, falls kein Element in der Queue sein sollte.
 	 * @return Das gelöschte vorderste Element der Queue, oder null, falls kein Element in der Queue sein sollte.
 	 */
-	T deleteFront();
+    @Nullable T deleteFront();
 
 	/**
 	 * Gibt die Position des als Parameter übergebenen Elements (item) in der Priority Queue zurück.

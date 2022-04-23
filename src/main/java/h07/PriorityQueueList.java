@@ -1,13 +1,15 @@
 package h07;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class PriorityQueueList<T> implements IPriorityQueue<T> {
-	final Comparator<T> priorityComparator;
-	final List<T> queue;
+	private final Comparator<T> priorityComparator;
+    private final List<T> queue;
 
 	/**
 	 * Erstellt eine Priority Queue basierend auf einer Liste, mit durch priorityComparator induzierter Ordnung.
@@ -30,7 +32,7 @@ public class PriorityQueueList<T> implements IPriorityQueue<T> {
 	}
 
 	@Override
-	public T delete(T item) {
+	public @Nullable T delete(T item) {
 		if (queue.remove(item)) {
 			return item;
 		}
@@ -38,7 +40,7 @@ public class PriorityQueueList<T> implements IPriorityQueue<T> {
 	}
 
 	@Override
-	public T getFront() {
+	public @Nullable T getFront() {
 		if (queue.size() > 0) {
 			return queue.get(0);
 		}
@@ -46,7 +48,7 @@ public class PriorityQueueList<T> implements IPriorityQueue<T> {
 	}
 
 	@Override
-	public T deleteFront() {
+	public @Nullable T deleteFront() {
 		if (queue.size() > 0) {
 			return queue.remove(0);
 		}

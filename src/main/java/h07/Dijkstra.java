@@ -1,5 +1,7 @@
 package h07;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -13,7 +15,7 @@ public class Dijkstra<L, D>  {
     private final BiFunction<D, L, D> distanceFunction;
     private final IPriorityQueue<NodePointer<L, D>> queue;
 
-    private Predicate<NodePointer<L, D>> predicate;
+    private @Nullable Predicate<NodePointer<L, D>> predicate;
 
     /**
      * Erzeugt eine Instanz von Dijkstra, welche den Dijkstra Algorithmus ausführt.
@@ -87,7 +89,8 @@ public class Dijkstra<L, D>  {
 			}
 			else if (queue.contains(destination) && comparator.compare(destinationDistance, destination.getDistance()) < 0) {
 				destination = queue.delete(destination);
-				destination.setDistance(destinationDistance);
+                assert destination != null;
+                destination.setDistance(destinationDistance);
 				destination.setPredecessor(currentNode);
 				queue.add(destination);
 			}

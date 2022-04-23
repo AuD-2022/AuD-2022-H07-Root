@@ -1,5 +1,6 @@
 package h07;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GraphNode<L> {
@@ -9,7 +10,7 @@ public class GraphNode<L> {
      * Erzeugt einen leeren Knoten.
      */
 	public GraphNode() {
-
+        outgoingArcs = new ArrayList<>();
 	}
 
     /**

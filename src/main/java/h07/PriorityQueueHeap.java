@@ -1,5 +1,7 @@
 package h07;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,7 +42,7 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
 	}
 
 	@Override
-	public T delete(T item) {
+	public @Nullable T delete(T item) {
         if (indexMap.containsKey(item)) {
             size--;
             int index = indexMap.get(item);
@@ -96,7 +98,7 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
 	}
 
 	@Override
-	public T getFront() {
+	public @Nullable T getFront() {
 		if (size > 0) {
             return heap[0];
         }
@@ -104,7 +106,7 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
 	}
 
 	@Override
-	public T deleteFront() {
+	public @Nullable T deleteFront() {
 		return delete(heap[0]);
 	}
 

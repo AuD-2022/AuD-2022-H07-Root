@@ -22,5 +22,4 @@ public class PathFinder<L, D> implements Function<NodePointer<L, D>, List<NodePo
 		}
 		return path;
 	}
-
 }

@@ -1,5 +1,7 @@
 package h07;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 public class Pair<T1, T2> {
@@ -49,7 +51,7 @@ public class Pair<T1, T2> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Pair<?, ?> pair = (Pair<?, ?>) o;
