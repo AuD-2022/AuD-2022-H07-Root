@@ -112,13 +112,16 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
 
 	@Override
 	public int getPosition(T item) {
-        int position = 0;
-        for (int i = 0; i < size; i++) {
-            if (priorityComparator.compare(item, heap[i]) < 0) {
-                position++;
+        if (indexMap.containsKey(item)) {
+            int position = 1;
+            for (int i = 0; i < size; i++) {
+                if (priorityComparator.compare(item, heap[i]) < 0) {
+                    position++;
+                }
             }
+            return position;
         }
-        return position;
+        return -1;
 	}
 
     @Override
