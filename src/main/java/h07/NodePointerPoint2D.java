@@ -60,10 +60,10 @@ public class NodePointerPoint2D implements NodePointer<Double, Double> {
     public Iterator<ArcPointer<Double, Double>> outgoingArcs() {
         List<ArcPointer<Double, Double>> arcs = new ArrayList<>();
         for (Point2D destination : collection.getPoints()) {
-            if (destination.getX() != point.getX() && destination.getY() != point.getY()) {
+            if (destination.getX() != point.getX() || destination.getY() != point.getY()) {
                 double arcLength = Math.sqrt(Math.pow(destination.getX() - point.getX(), 2)
                     + Math.pow(destination.getY() - point.getY(), 2));
-                if (arcLength < collection.getMaxArcLength()) {
+                if (arcLength <= collection.getMaxArcLength()) {
                     ArcPointer<Double, Double> newArc = existingArcPointers.containsKey(new Pair<>(point, destination)) ?
                         existingArcPointers.get(new Pair<>(point, destination)) :
                         new ArcPointerPoint2D(existingNodePointers, existingArcPointers, point, destination, collection);
