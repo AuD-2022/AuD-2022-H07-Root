@@ -29,16 +29,8 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
 	public void add(T item) {
         heap[size] = item;
         indexMap.put(item, size);
-        int currentIndex = size;
-        int parentIndex = (size - 1) / 2;
+        swapUpwards(size);
         size++;
-
-        // swap element upwards to correct position
-        while (parentIndex >= 0 && priorityComparator.compare(heap[currentIndex], heap[parentIndex]) > 0) {
-            swap(currentIndex, parentIndex);
-            currentIndex = parentIndex;
-            parentIndex = (parentIndex - 1) / 2;
-        }
 	}
 
 	@Override
@@ -55,37 +47,17 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
             heap[size] = null;
             indexMap.put(heap[index], index);
 
-            int currentIndex = index;
-
-            // swap element downward to correct position
-            while (true) {
-                int leftChildIndex = currentIndex * 2 + 1;
-                int rightChildIndex = currentIndex * 2 + 2;
-                int biggestChildIndex;
-
-                // any existing children?
-                if (leftChildIndex < size) {
-                    // only left child existing?
-                    if (rightChildIndex >= size) {
-                        biggestChildIndex = leftChildIndex;
-                    } else {
-                        biggestChildIndex = priorityComparator.compare(heap[leftChildIndex], heap[rightChildIndex]) >= 0 ?
-                            leftChildIndex : rightChildIndex;
-                    }
-                    if (priorityComparator.compare(heap[currentIndex], heap[biggestChildIndex]) < 0) {
-                        swap(currentIndex, biggestChildIndex);
-                        currentIndex = biggestChildIndex;
-                        continue;
-                    }
-                }
-                return item;
-            }
+			// Bringe Element an korrekte Position - beide Fälle sind möglich (kleiner / größer als Kinder / Eltern).
+			// Einen heapinvariantenkonformen Tausch nach oben / unten garantiert die korrekte Position.
+			swapUpwards(index);
+			swapDownwards(index);
+			return item;
         }
         return null;
 	}
 
     /**
-     * Tauscht die Position der Elemente
+     * Tauscht die Position der Elemente.
      * @param index0 Die Position des ersten Elements.
      * @param index1 Die Position des zweiten Elements.
      */
@@ -95,6 +67,48 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
         heap[index1] = store;
         indexMap.put(heap[index0], index0);
         indexMap.put(heap[index1], index1);
+	}
+	
+	/**
+     * Tauscht Element mit Elter bis es an der korrekten Position ist.
+     * @param index Der Index des zu tauschenden Elements.
+     */
+	private void swapUpwards(int index) {
+		int parentIndex = (size - 1) / 2;
+        while (parentIndex >= 0 && priorityComparator.compare(heap[index], heap[parentIndex]) > 0) {
+            swap(index, parentIndex);
+            index = parentIndex;
+            parentIndex = (parentIndex - 1) / 2;
+        }	
+	}
+	
+	/**
+     * Tauscht Element mit Kind bis es an der korrekten Position ist.
+     * @param index Der Index des zu tauschenden Elements.
+     */
+	private void swapDownwards(int index) {
+		while (true) {
+			int leftChildIndex = index * 2 + 1;
+			int rightChildIndex = index * 2 + 2;
+			int biggestChildIndex;
+
+			// any existing children?
+			if (leftChildIndex < size) {
+				// only left child existing?
+				if (rightChildIndex >= size) {
+					biggestChildIndex = leftChildIndex;
+				} else {
+					biggestChildIndex = priorityComparator.compare(heap[leftChildIndex], heap[rightChildIndex]) >= 0 ?
+						leftChildIndex : rightChildIndex;
+				}
+				if (priorityComparator.compare(heap[index], heap[biggestChildIndex]) < 0) {
+					swap(index, biggestChildIndex);
+					index = biggestChildIndex;
+					continue;
+				}
+			}
+			return;
+		}
 	}
 
 	@Override
@@ -132,6 +146,7 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
     @Override
 	public void clear() {
         size = 0;
+		indexMap.clear();
 	}
 
 	@Override
