@@ -259,7 +259,7 @@ public class H07_RubricProvider implements RubricProvider {
 
     @Override
     public void configure(RubricConfiguration configuration) {
-        configuration.addTransformer(new BytecodeTransformations()); //TODO wirft Fehler
+        configuration.addTransformer(new BytecodeTransformations());
         configuration.addTransformer(new AccessTransformer());
     }
 }

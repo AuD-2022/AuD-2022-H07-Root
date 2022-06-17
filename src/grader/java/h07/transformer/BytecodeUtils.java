@@ -7,7 +7,7 @@ import org.objectweb.asm.Type;
 final class BytecodeUtils {
 
     static final Type OBJECT_TYPE = Type.getObjectType("Ljava/lang/Object;");
-    private static final String ASSIGNMENT_ID = "h01";
+    private static final String ASSIGNMENT_ID = "h07";
 
     private BytecodeUtils() {}
 
@@ -70,7 +70,7 @@ final class BytecodeUtils {
 //        }
 
         // create new objectref for a MethodInterceptor$Invocation object
-        visitor.visitTypeInsn(Opcodes.NEW, "%s/utils/MethodInterceptor$Invocation".formatted(ASSIGNMENT_ID));
+        visitor.visitTypeInsn(Opcodes.NEW, "%s/transformer/MethodInterceptor$Invocation".formatted(ASSIGNMENT_ID));
         visitor.visitInsn(Opcodes.DUP);
 
         // load parameters for MethodInterceptor$Invocation
@@ -93,16 +93,16 @@ final class BytecodeUtils {
 
         // initialize MethodInterceptor$Invocation object
         visitor.visitMethodInsn(Opcodes.INVOKESPECIAL,
-            "%s/utils/MethodInterceptor$Invocation".formatted(ASSIGNMENT_ID),
+            "%s/transformer/MethodInterceptor$Invocation".formatted(ASSIGNMENT_ID),
             "<init>",
             "(Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/Object;)V",
             false);
 
         // add invocation to list of invocations
         visitor.visitMethodInsn(Opcodes.INVOKESTATIC,
-            "%s/utils/MethodInterceptor".formatted(ASSIGNMENT_ID),
+            "%s/transformer/MethodInterceptor".formatted(ASSIGNMENT_ID),
             "addInvocation",
-            "(L%s/utils/MethodInterceptor$Invocation;)V".formatted(ASSIGNMENT_ID),
+            "(L%s/transformer/MethodInterceptor$Invocation;)V".formatted(ASSIGNMENT_ID),
             false);
 
         // push original parameters and objectref back onto the stack
