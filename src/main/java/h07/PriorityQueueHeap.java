@@ -68,20 +68,20 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
         indexMap.put(heap[index0], index0);
         indexMap.put(heap[index1], index1);
 	}
-	
+
 	/**
      * Tauscht Element mit Elter bis es an der korrekten Position ist.
      * @param index Der Index des zu tauschenden Elements.
      */
 	private void swapUpwards(int index) {
-		int parentIndex = (size - 1) / 2;
+		int parentIndex = (index - 1) / 2;
         while (parentIndex >= 0 && priorityComparator.compare(heap[index], heap[parentIndex]) > 0) {
             swap(index, parentIndex);
             index = parentIndex;
             parentIndex = (parentIndex - 1) / 2;
-        }	
+        }
 	}
-	
+
 	/**
      * Tauscht Element mit Kind bis es an der korrekten Position ist.
      * @param index Der Index des zu tauschenden Elements.
