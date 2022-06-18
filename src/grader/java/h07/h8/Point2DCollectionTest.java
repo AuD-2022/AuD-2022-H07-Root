@@ -59,7 +59,7 @@ public class Point2DCollectionTest {
 
         double average = values.stream().mapToDouble(Double::doubleValue).sum() / values.size();
         double standardDeviation = Math.sqrt(1/(values.size() - 1.0) * values.stream().mapToDouble(value -> Math.pow(value - average, 2)).sum());
-        assertTrue(standardDeviation > 1.5, "Expected a standard deviation of at least 2.0 but got %f"
+        assertTrue(standardDeviation > 1.5, "Expected a standard deviation of at least 1.5 but got %f"
             .formatted(standardDeviation));
     }
 
