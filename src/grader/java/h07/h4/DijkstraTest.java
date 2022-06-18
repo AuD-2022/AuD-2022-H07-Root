@@ -2,6 +2,7 @@ package h07.h4;
 
 import h07.Dijkstra;
 import h07.IPriorityQueue;
+import h07.IllegalMethodsCheck;
 import h07.NodePointer;
 import h07.implementation.ArcPointerImpl;
 import h07.implementation.DijkstraImpl;
@@ -9,6 +10,7 @@ import h07.implementation.NodePointerImpl;
 import h07.implementation.PriorityQueueImpl;
 import h07.provider.GraphToNodePointerImplProvider;
 import h07.transformer.MethodInterceptor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -50,6 +52,18 @@ public class DijkstraTest {
     public void reset() {
         NodePointerImpl.resetIds();
         MethodInterceptor.reset();
+    }
+
+    @AfterEach
+    public void checkIllegalMethods() {
+        IllegalMethodsCheck.checkMethods(
+            "^java/util/Comparator.+",
+            "^java/util/Iterator.+",
+            "^java/util/LinkedList.+",
+            "^java/util/ArrayList.+",
+            "^java/util/BiFunction.+",
+            "^java/util/Function.+",
+            "^java/util/Predicate.+");
     }
 
     @Test

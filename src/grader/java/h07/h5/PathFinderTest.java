@@ -1,10 +1,12 @@
 package h07.h5;
 
+import h07.IllegalMethodsCheck;
 import h07.NodePointer;
 import h07.PathFinder;
 import h07.implementation.NodePointerImpl;
 import h07.provider.PathProvider;
 import h07.transformer.MethodInterceptor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -21,6 +23,11 @@ public class PathFinderTest {
     public void reset() {
         NodePointerImpl.resetIds();
         MethodInterceptor.reset();
+    }
+
+    @AfterEach
+    public void checkIllegalMethods() {
+        IllegalMethodsCheck.checkMethods("^java/util/LinkedList.+", "^java/util/ArrayList.+");
     }
 
     @ParameterizedTest

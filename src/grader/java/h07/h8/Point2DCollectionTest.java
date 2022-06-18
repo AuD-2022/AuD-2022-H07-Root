@@ -1,12 +1,13 @@
 package h07.h8;
 
+import h07.IllegalMethodsCheck;
 import h07.Point2D;
 import h07.Point2DCollection;
 import h07.transformer.MethodInterceptor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sourcegrade.jagr.api.rubric.TestForSubmission;
-import org.sourcegrade.jagr.api.testing.extension.JagrExecutionCondition;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -24,6 +25,15 @@ public class Point2DCollectionTest {
     @BeforeEach
     public void reset() {
         MethodInterceptor.reset();
+    }
+
+    @AfterEach
+    public void checkIllegalMethods() {
+        IllegalMethodsCheck.checkMethods(
+            "^java/util/concurrent/ThreadLocalRandom.+",
+            "^java/util/LinkedList.+",
+            "^java/util/ArrayList.+",
+            "^java/lang/Double compare\\(DD\\)I+");
     }
 
     @Test

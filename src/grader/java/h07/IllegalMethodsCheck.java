@@ -31,7 +31,10 @@ public class IllegalMethodsCheck {
                     ".+? valueOf\\(.+\\).+",
                     ".+? toString\\(.*\\)Ljava/lang/String;$",
                     "^java/lang/String format(ting)?\\(.*\\)Ljava/lang/String;$",
-                    "^java/lang/.+? (boolean|byte|short|char|int|long|float|double)Value\\(\\).+"
+                    "^java/lang/.+? (boolean|byte|short|char|int|long|float|double)Value\\(\\).+",
+                    "^java/lang/Class desiredAssertionStatus\\(\\)Z",
+                    "^java/util/Objects hash.+",
+                    "^java/lang/Object getClass.+"
                 );
 
                 if (Stream.concat(defaultAcceptedSignatures, Arrays.stream(acceptedSignatures))

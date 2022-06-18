@@ -1,9 +1,11 @@
 package h07.h2;
 
+import h07.IllegalMethodsCheck;
 import h07.PriorityQueueList;
 import h07.implementation.QueueEntry;
 import h07.provider.QueueEntryListProvider;
 import h07.transformer.MethodInterceptor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,7 +29,15 @@ public class PriorityQueueListTest {
     @BeforeEach
     public void reset() {
         QueueEntry.reset();
+        MethodInterceptor.reset();
+    }
 
+    @AfterEach
+    public void checkIllegalMethods() {
+        IllegalMethodsCheck.checkMethods(
+            "^java/util/LinkedList.+",
+            "^java/util/Comparator.+",
+            "^java/util/Iterator.+");
     }
 
     @Test

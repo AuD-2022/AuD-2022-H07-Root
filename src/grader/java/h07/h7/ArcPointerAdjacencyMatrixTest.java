@@ -5,6 +5,7 @@ import h07.implementation.NodePointerImpl;
 import h07.provider.GraphToAdjacencyMatrixPointerProvider;
 import h07.transformer.MethodInterceptor;
 import kotlin.Triple;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -25,6 +26,11 @@ public class ArcPointerAdjacencyMatrixTest extends AdjacencyMatrixPointerTest {
     @BeforeEach
     public void reset() {
         MethodInterceptor.reset();
+    }
+
+    @AfterEach
+    public void checkIllegalMethods() {
+        IllegalMethodsCheck.checkMethods("^java/util/HashMap.+");
     }
 
     @ParameterizedTest

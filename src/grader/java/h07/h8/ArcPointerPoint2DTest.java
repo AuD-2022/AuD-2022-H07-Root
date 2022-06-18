@@ -3,6 +3,7 @@ package h07.h8;
 import h07.*;
 import h07.provider.Pointer2DPointerProvider;
 import h07.transformer.MethodInterceptor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -22,6 +23,12 @@ public class ArcPointerPoint2DTest extends Point2DPointerTest{
     @BeforeEach
     public void reset() {
         MethodInterceptor.reset();
+    }
+
+    @AfterEach
+    public void checkIllegalMethods() {
+        IllegalMethodsCheck.checkMethods(
+            "^java/util/HashMap.+", "java/lang/Math.+");
     }
 
     @ParameterizedTest
