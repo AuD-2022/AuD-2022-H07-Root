@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestForSubmission("h07")
 public class Point2DCollectionTest {
 
-    public static final int POINT_COUNT = 100;
+    public static final int POINT_COUNT = 25;
     public static final int MAX_ARC_LENGTH = 10;
 
     @BeforeEach
@@ -59,7 +59,7 @@ public class Point2DCollectionTest {
 
         double average = values.stream().mapToDouble(Double::doubleValue).sum() / values.size();
         double standardDeviation = Math.sqrt(1/(values.size() - 1.0) * values.stream().mapToDouble(value -> Math.pow(value - average, 2)).sum());
-        assertTrue(standardDeviation > 2.0, "Expected a standard deviation of at least 2.0 but got %f"
+        assertTrue(standardDeviation > 1.5, "Expected a standard deviation of at least 2.0 but got %f"
             .formatted(standardDeviation));
     }
 
