@@ -18,16 +18,16 @@ import static h07.h6.GraphPointerTest.*;
 public class Assertions {
 
     public static void assertPositionCorrect(List<QueueEntry> entries, QueueEntry entry, int actual) {
-        int lowerIndex = (int) entries.stream().filter(j -> CMP.compare(j, entry) > 0 ).count();
-        int upperIndex = (int) (entries.size() - entries.stream().filter(j -> CMP.compare(j, entry) < 0).count() - 1);
+        int lowerIndex = (int) entries.stream().filter(j -> CMP.compare(j, entry) > 0 ).count() + 1;
+        int upperIndex = (int) (entries.size() - entries.stream().filter(j -> CMP.compare(j, entry) < 0).count());
         assertBetween(lowerIndex, upperIndex, actual,
             "incorrect value for position of %s."
                 .formatted(Objects.toString(entry)));
     }
 
     public static void assertPositionCorrect(QueueEntry[] entries, QueueEntry entry, int actual, int size) {
-        int lowerIndex = (int) Arrays.stream(entries).limit(size).filter(j -> CMP.compare(j, entry) > 0 ).count();
-        int upperIndex = (int) (entries.length - Arrays.stream(entries).limit(size).filter(j -> CMP.compare(j, entry) < 0).count() - 1);
+        int lowerIndex = (int) Arrays.stream(entries).limit(size).filter(j -> CMP.compare(j, entry) > 0 ).count() + 1;
+        int upperIndex = (int) (entries.length - Arrays.stream(entries).limit(size).filter(j -> CMP.compare(j, entry) < 0).count());
         assertBetween(lowerIndex, upperIndex, actual,
             "incorrect value for position of %s."
                 .formatted(Objects.toString(entry)));

@@ -159,7 +159,7 @@ public class PriorityQueueHeapTest {
 
         for (int i = 0; i < TEST_ITERATIONS; i++) {
             QueueEntry nextElement = getRandomElement(heap, entries.size());
-            assertPositionCorrect(entries, nextElement, queue.getPosition(nextElement) - 1);
+            assertPositionCorrect(entries, nextElement, queue.getPosition(nextElement));
         }
 
         assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY));
@@ -215,7 +215,7 @@ public class PriorityQueueHeapTest {
             queue.add(nextElement);
             inserted.add(nextElement);
             assertTrue(queue.contains(nextElement), "return value of contains not correct");
-            assertPositionCorrect(getHeap(queue), nextElement, queue.getPosition(nextElement) - 1, inserted.size());
+            assertPositionCorrect(getHeap(queue), nextElement, queue.getPosition(nextElement), inserted.size());
             assertPriorityQueueCorrect(inserted, queue);
         }
 
@@ -226,7 +226,7 @@ public class PriorityQueueHeapTest {
         for (int i = 0; i < HEAP_CAPACITY; i++) {
             QueueEntry nextElement = inserted.remove(RANDOM.nextInt(inserted.size()));
             assertTrue(queue.contains(nextElement), "return value of contains not correct");
-            assertPositionCorrect(getHeap(queue), nextElement, queue.getPosition(nextElement) - 1, inserted.size());
+            assertPositionCorrect(getHeap(queue), nextElement, queue.getPosition(nextElement), inserted.size());
             queue.delete(nextElement);
             assertFalse(queue.contains(nextElement), "return value of contains not correct");
             assertEquals(-1, queue.getPosition(nextElement), "return value of getPosition not correct");
