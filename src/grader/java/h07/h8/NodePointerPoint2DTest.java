@@ -36,7 +36,7 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
             "^java/util/Iterator.+",
             "^java/util/LinkedList.+",
             "^java/util/ArrayList.+",
-            "^java/lang/Math.+");
+            "^java/lang/Double compare\\(DD\\)I");
     }
 
     @ParameterizedTest
@@ -100,7 +100,18 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
 
         //existingArcsMap contains all arcs
         List<ArcPointerPoint2D> actualOutgoingArcs = arcPointerListToArcPointerPoint2DList(iteratorToList(node.outgoingArcs()));
-        assertEquals(expectedOutgoingArcs.size(), actualOutgoingArcs.size(), "the method outgoingArcs() did not return the correct amount of arcs if the existingArcPointersMap contains all arcs");
+
+        //create a message with more information about why the test failed
+        String extendedMessage = "";
+        if (expectedOutgoingArcs.size() == actualOutgoingArcs.size() - 1) {
+            List<ArcPointerPoint2D> actualOutgoingArcsCopy = new ArrayList<>(actualOutgoingArcs);
+            actualOutgoingArcsCopy.removeAll(expectedOutgoingArcs);
+            if (actualOutgoingArcsCopy.size() == 1 && getDestination(actualOutgoingArcsCopy.get(0)) == point) {
+                extendedMessage = ". An arc to the node itself was returned";
+            }
+        }
+
+        assertEquals(expectedOutgoingArcs.size(), actualOutgoingArcs.size(), "the method outgoingArcs() did not return the correct amount of arcs if the existingArcPointersMap contains all arcs" + extendedMessage);
         assertListContainsAllWithPredicate(expectedOutgoingArcs, actualOutgoingArcs, (ArcPointerPoint2D expected, ArcPointerPoint2D actual) -> expected == actual, "the method outgoingArcs() did not return the correct elements if the existingArcPointersMap contains all arcs");
 
         //existingArcsMap does not contain the arcs

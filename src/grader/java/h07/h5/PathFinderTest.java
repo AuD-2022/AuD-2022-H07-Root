@@ -27,7 +27,11 @@ public class PathFinderTest {
 
     @AfterEach
     public void checkIllegalMethods() {
-        IllegalMethodsCheck.checkMethods("^java/util/LinkedList.+", "^java/util/ArrayList.+");
+        IllegalMethodsCheck.checkMethods(
+            "^java/util/LinkedList.+",
+            "^java/util/ArrayList.+",
+            "^java/util/Iterator.+"
+        );
     }
 
     @ParameterizedTest
@@ -38,8 +42,19 @@ public class PathFinderTest {
         assertEquals(nodes.size(), actualNodes.size(),
             "the provided path does not contain the correct amount of nodes. Expected %d, actual %d".formatted(nodes.size(), actualNodes.size()));
 
+        //check if the order is reversed for better assertion message
+        boolean reversed = true;
         for (int i = 0; i < nodes.size(); i++) {
-            assertEquals(nodes.get(i), actualNodes.get(i),
+            if (nodes.get(nodes.size() - i - 1) != actualNodes.get(i)) {
+                reversed = false;
+                break;
+            }
+        }
+
+        if (nodes.size() > 1 && reversed) fail("the order of the elements in the returned list is reversed");
+
+        for (int i = 0; i < nodes.size(); i++) {
+            assertSame(nodes.get(i), actualNodes.get(i),
                 "node at position %d not correct. Expected %s, actual %s".formatted(i, nodes.get(i).toString(), actualNodes.get(i).toString()));
         }
 

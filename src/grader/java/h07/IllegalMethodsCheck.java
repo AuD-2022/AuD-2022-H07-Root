@@ -34,7 +34,8 @@ public class IllegalMethodsCheck {
                     "^java/lang/.+? (boolean|byte|short|char|int|long|float|double)Value\\(\\).+",
                     "^java/lang/Class desiredAssertionStatus\\(\\)Z",
                     "^java/util/Objects hash.+",
-                    "^java/lang/Object getClass.+"
+                    "^java/lang/Object getClass.+",
+                    "java/lang/Math.+"
                 );
 
                 if (Stream.concat(defaultAcceptedSignatures, Arrays.stream(acceptedSignatures))

@@ -33,7 +33,7 @@ public class Point2DCollectionTest {
             "^java/util/concurrent/ThreadLocalRandom.+",
             "^java/util/LinkedList.+",
             "^java/util/ArrayList.+",
-            "^java/lang/Double compare\\(DD\\)I+");
+            "^java/lang/Double compare\\(DD\\)I");
     }
 
     @Test

@@ -34,8 +34,8 @@ public class Assertions {
     }
 
     public static void assertPriorityListEquals(List<QueueEntry> expected, List<QueueEntry> actual) {
-        assertEquals(expected.size(), actual.size());
-        assertTrue(expected.containsAll(actual));
+        assertEquals(expected.size(), actual.size(), "the amount of elements in the queue is not correct");
+        assertTrue(expected.containsAll(actual), "the queue does not contain the expected elements");
         assertCorrectOrder(actual);
     }
 
@@ -43,13 +43,13 @@ public class Assertions {
         if (list.size() < 2) return;
 
         for (int i = 1; i < list.size(); i++) {
-            assertTrue(CMP.compare(list.get(i - 1), list.get(i)) >= 0);
+            assertTrue(CMP.compare(list.get(i - 1), list.get(i)) >= 0, "the order of the elements in the queue is not correct");
         }
     }
 
     public static void assertIndexMapCorrect(QueueEntry[] heap, Map<QueueEntry, Integer> indexMap, int size) {
 
-        assertEquals(indexMap.entrySet().size(), size, "the amount of entries in the indexMap do not match the element in the queue");
+        assertEquals(indexMap.entrySet().size(), size, "the amount of entries in the indexMap do not match the amount of elements in the queue");
 
         for (int i = 0; i < size; i++) {
             assertIndexMapCorrect(heap, indexMap, heap[i]);

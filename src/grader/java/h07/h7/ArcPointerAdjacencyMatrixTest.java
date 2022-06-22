@@ -85,14 +85,14 @@ public class ArcPointerAdjacencyMatrixTest extends AdjacencyMatrixPointerTest {
 
         //existingNodes contains destination node
         NodePointer<Integer, Integer> actualNodePointer = new ArcPointerAdjacencyMatrix<>(existingNodePointers, existingArcPointers, adjacencyMatrix, start, destination).destination();
-        assertInstanceOf(NodePointerAdjacencyMatrix.class, actualNodePointer, "the NodePointer returned by the destination() method does not have the correct dynamic type");
+        assertInstanceOf(NodePointerAdjacencyMatrix.class, actualNodePointer, "the NodePointer returned by the destination() method does not have the correct dynamic type if the existingNodePointers map contains the destination node");
         assertSame(existingNodePointers.get(destination), actualNodePointer, "the methode destination() did not return the correct value if the existingNodePointers map contains the destination node.");
 
         //existingNodes does not contain destination node
-        NodePointer<Integer, Integer> expectedNodePointer = existingNodePointers.remove(destination);
+        existingNodePointers.remove(destination);
 
         actualNodePointer =new ArcPointerAdjacencyMatrix<>(existingNodePointers, existingArcPointers, adjacencyMatrix, start, destination).destination();
-        assertInstanceOf(NodePointerAdjacencyMatrix.class, actualNodePointer, "the NodePointer returned by the destination() method does not have the correct dynamic type");
+        assertInstanceOf(NodePointerAdjacencyMatrix.class, actualNodePointer, "the NodePointer returned by the destination() method does not have the correct dynamic type if the existingNodePointers map does not contain the destination node");
         assertNodePointerAdjacencyMatrixEquals(existingNodePointers, existingArcPointers, adjacencyMatrix,
             null, null, destination, (NodePointerAdjacencyMatrix<Integer, Integer>) actualNodePointer);
     }

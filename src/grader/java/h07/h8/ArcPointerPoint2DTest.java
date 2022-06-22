@@ -28,7 +28,7 @@ public class ArcPointerPoint2DTest extends Point2DPointerTest{
     @AfterEach
     public void checkIllegalMethods() {
         IllegalMethodsCheck.checkMethods(
-            "^java/util/HashMap.+", "java/lang/Math.+");
+            "^java/util/HashMap.+", "^java/lang/Double compare\\(DD\\)I");
     }
 
     @ParameterizedTest
@@ -79,14 +79,14 @@ public class ArcPointerPoint2DTest extends Point2DPointerTest{
 
         //existingNodes contains destination node
         NodePointer<Double, Double> actualDestination = new ArcPointerPoint2D((HashMap<Point2D, NodePointerPoint2D>) existingNodePointers.clone(), (HashMap<Pair<Point2D, Point2D>, ArcPointerPoint2D>) existingArcPointers.clone(), source, destination, collection).destination();
-        assertInstanceOf(NodePointerPoint2D.class, actualDestination, "the NodePointer returned by the destination() method does not have the correct dynamic type");
+        assertInstanceOf(NodePointerPoint2D.class, actualDestination, "the NodePointer returned by the destination() method does not have the correct dynamic type if the existingNodePointers map contains the destination node");
         assertSame(existingNodePointers.get(destination), actualDestination, "the methode destination() did not return the correct value if the existingNodePointers map contains the destination node.");
 
         //existingNodes does not contain destination node
         existingNodePointers.remove(destination);
 
         actualDestination = new ArcPointerPoint2D(existingNodePointers, existingArcPointers, source, destination, collection).destination();
-        assertInstanceOf(NodePointerPoint2D.class, actualDestination, "the NodePointer returned by the destination() method does not have the correct dynamic type");
+        assertInstanceOf(NodePointerPoint2D.class, actualDestination, "the NodePointer returned by the destination() method does not have the correct dynamic type if the existingNodePointers map does not contain the destination node");
         assertNodePointerPoint2DEquals(existingNodePointers, existingArcPointers, destination, collection,
             null, null, (NodePointerPoint2D) actualDestination);
     }

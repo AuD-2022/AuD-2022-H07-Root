@@ -73,14 +73,14 @@ public class ArcPointerGraphTest extends GraphPointerTest {
         //existingNodePointers contains the destination node
         GraphArc<Integer> arcToAdd = new GraphArc<>(length, destination);
         NodePointer<Integer, Integer> actualDestination = new ArcPointerGraph<>(existingNodePointers, existingArcPointers, arcToAdd).destination();
-        assertInstanceOf(NodePointerGraph.class, actualDestination, "the NodePointer returned by the destination() method does not have the correct dynamic type");
+        assertInstanceOf(NodePointerGraph.class, actualDestination, "the NodePointer returned by the destination() method does not have the correct dynamic type if the existingNodePointers map contains the destination node");
         assertEquals(existingNodePointers.get(destination), actualDestination, "the methode destination() did not return the correct value if the existingNodePointers map contains the destination node");
 
         //existingNodePointers does not contain the destination node
         existingNodePointers.remove(destination);
 
         actualDestination = new ArcPointerGraph<>(existingNodePointers, existingArcPointers, arcToAdd).destination();
-        assertInstanceOf(NodePointerGraph.class, actualDestination, "the NodePointer returned by the destination() method does not have the correct dynamic type");
+        assertInstanceOf(NodePointerGraph.class, actualDestination, "the NodePointer returned by the destination() method does not have the correct dynamic type if the existingNodePointers map does not contain the destination node");
         assertNodePointerGraphEquals(existingNodePointers, existingArcPointers, destination, null, null, (NodePointerGraph<Integer, Integer>) actualDestination);
     }
 
