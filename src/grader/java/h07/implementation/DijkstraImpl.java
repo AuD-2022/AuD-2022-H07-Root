@@ -93,7 +93,7 @@ public class DijkstraImpl {
                 destination.setPredecessor(currentNode);
                 queue.add(destination);
             }
-            else if (queue.contains(destination) && comparator.compare(destinationDistance, destination.getDistance()) < 0) {
+            else if (queue.contains(destination) && comparator.compare(destinationDistance, destination.getDistance()) > 0) {
                 destination = queue.delete(destination);
                 assert destination != null;
                 destination.setDistance(destinationDistance);

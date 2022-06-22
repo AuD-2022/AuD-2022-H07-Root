@@ -107,8 +107,8 @@ public class Assertions {
 
     public static void assertQueueFactoryComparatorCorrect(Comparator<NodePointer<Integer, Integer>> actual) {
         assertEquals(0, actual.compare(new NodePointerImpl(1), new NodePointerImpl(1)), "The QueueFactory wasn't invoked with a correct Comparator. The Comparator returned an incorrect value for two nodes with same distance");
-        assertTrue(actual.compare(new NodePointerImpl(1), new NodePointerImpl(2)) < 0, "The QueueFactory wasn't invoked with a correct Comparator. The Comparator returned an incorrect value when the distance to the first node is shorter than the distance to the second node");
-        assertTrue(actual.compare(new NodePointerImpl(2), new NodePointerImpl(1)) > 0, "The QueueFactory wasn't invoked with a correct Comparator. The Comparator returned an incorrect value when the distance to the first node is longer than the distance to the second node");
+        assertTrue(actual.compare(new NodePointerImpl(1), new NodePointerImpl(2)) > 0, "The QueueFactory wasn't invoked with a correct Comparator. The Comparator returned an incorrect value when the distance to the first node is shorter than the distance to the second node. Expected a value greater than 0, actual: %d".formatted(actual.compare(new NodePointerImpl(1), new NodePointerImpl(2))));
+        assertTrue(actual.compare(new NodePointerImpl(2), new NodePointerImpl(1)) < 0, "The QueueFactory wasn't invoked with a correct Comparator. The Comparator returned an incorrect value when the distance to the first node is longer than the distance to the second node. Expected a value less than 0, actual: %d".formatted(actual.compare(new NodePointerImpl(1), new NodePointerImpl(2))));
     }
 
 

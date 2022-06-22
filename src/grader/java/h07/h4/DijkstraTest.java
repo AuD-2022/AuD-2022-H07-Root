@@ -18,8 +18,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.sourcegrade.jagr.api.rubric.TestForSubmission;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -41,8 +39,10 @@ public class DijkstraTest {
         return toReturn;
     };
     public static final BiFunction<Integer, Integer, Integer> DISTANCE_FUNCTION = (Integer a, Integer b) -> a == null ? b : a + b;
-    public static final Comparator<Integer> CMP = Comparator.naturalOrder();
-    public static final Comparator<NodePointer<Integer, Integer>> NODE_POINTER_CMP = (o1, o2) -> CMP.compare(o1.getDistance(), o2.getDistance());
+    public static final Comparator<Integer> CMP = (i1, i2) -> {
+        if (i1 == null || i2 == null) fail("a value passed to the comparator was null");
+        return Comparator.<Integer>reverseOrder().compare(i1, i2);
+    };
 
     private static IPriorityQueue<NodePointer<Integer, Integer>> usedQueue = null;
     private static boolean queueFactoryInvoked = false;
@@ -108,18 +108,15 @@ public class DijkstraTest {
     }
 
     @Test
-    public void testUnvisitedNode() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
+    public void testUnvisitedNode() throws NoSuchFieldException, IllegalAccessException {
+        Dijkstra<Integer, Integer> dijkstra = createInstance();
 
-        NodePointerImpl startNode = new NodePointerImpl();
-        startNode.setDistance(5);
+        NodePointerImpl startNode = new NodePointerImpl(5);
         NodePointer<Integer, Integer> unvisitedNode = new NodePointerImpl();
         startNode.addOutgoingArc(new ArcPointerImpl(10, unvisitedNode));
         getPriorityQueue(dijkstra).add(startNode);
 
-        Method method = Dijkstra.class.getDeclaredMethod("expandNode", NodePointer.class);
-        method.setAccessible(true);
-        method.invoke(dijkstra, startNode);
+        dijkstra.expandNode(startNode);
 
         assertSame(startNode, unvisitedNode.getPredecessor(), "the attribute predecessor of the visited node does not have the correct value");
         assertEquals(15, unvisitedNode.getDistance(), "the attribute distance of the visited node does not have the correct value");
@@ -127,47 +124,42 @@ public class DijkstraTest {
     }
 
     @Test
-    public void testUpdateVisitedNode() throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void testUpdateVisitedNode() throws NoSuchFieldException, IllegalAccessException {
         //test update distance
-        Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
+        Dijkstra<Integer, Integer> dijkstra = createInstance();
 
-        NodePointerImpl startNode = new NodePointerImpl();
-        startNode.setDistance(5);
-        NodePointer<Integer, Integer> visitedNode = new NodePointerImpl();
+        NodePointerImpl startNode = new NodePointerImpl(5);
+        NodePointer<Integer, Integer> visitedNode = new NodePointerImpl(20);
+        NodePointerImpl otherNode = new NodePointerImpl(15);
+
         startNode.addOutgoingArc(new ArcPointerImpl(10, visitedNode));
-        NodePointerImpl otherNode = new NodePointerImpl();
-        otherNode.setDistance(0);
         visitedNode.setPredecessor(otherNode);
-        visitedNode.setDistance(20);
+        otherNode.addOutgoingArc(new ArcPointerImpl(5, visitedNode));
 
         getPriorityQueue(dijkstra).add(visitedNode);
         getPriorityQueue(dijkstra).add(startNode);
 
-
-        Method method = Dijkstra.class.getDeclaredMethod("expandNode", NodePointer.class);
-        method.setAccessible(true);
-        method.invoke(dijkstra, startNode);
+        dijkstra.expandNode(startNode);
 
         assertSame(startNode, visitedNode.getPredecessor(), "the attribute predecessor of the visited node does not have the correct value");
         assertEquals(15, visitedNode.getDistance(), "the attribute distance of the visited node does not have the correct value");
         assertTrue(getPriorityQueue(dijkstra).contains(visitedNode), "the queue does not contain the visited node");
 
         //test do not update distance
-        dijkstra = new Dijkstra<>(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
+        dijkstra = createInstance();
 
-        startNode = new NodePointerImpl();
-        startNode.setDistance(5);
-        visitedNode = new NodePointerImpl();
+        startNode = new NodePointerImpl(5);
+        visitedNode = new NodePointerImpl(1);
+        otherNode = new NodePointerImpl(0);
+
         startNode.addOutgoingArc(new ArcPointerImpl(10, visitedNode));
-        otherNode = new NodePointerImpl();
-        otherNode.setDistance(0);
         visitedNode.setPredecessor(otherNode);
-        visitedNode.setDistance(1);
+        otherNode.addOutgoingArc(new ArcPointerImpl(1, visitedNode));
 
         getPriorityQueue(dijkstra).add(visitedNode);
         getPriorityQueue(dijkstra).add(startNode);
 
-        method.invoke(dijkstra, startNode);
+        dijkstra.expandNode(startNode);
 
         assertSame(otherNode, visitedNode.getPredecessor(), "the attribute predecessor of the visited node does not have the correct value");
         assertEquals(1, visitedNode.getDistance(), "the attribute distance of the visited node does not have the correct value");
@@ -201,7 +193,7 @@ public class DijkstraTest {
         HashMap<NodePointer<Integer, Integer>, NodePointer<Integer, Integer>> expectedPredecessor = new HashMap<>();
         List<NodePointer<Integer, Integer>> expected = getExpectedResult(expectedDistance, expectedPredecessor, startNode, nodePointers, null);
 
-        when(dijkstra.finished(any(NodePointer.class))).thenReturn(false);
+        when(dijkstra.finished(any(NodePointer.class))).thenAnswer(invocation -> invocation.getArgument(0) == null);
 
         dijkstra.initialize(startNode);
         List<NodePointer<Integer, Integer>> actual = dijkstra.run();
@@ -211,9 +203,9 @@ public class DijkstraTest {
 
     @ParameterizedTest
     @ArgumentsSource(GraphToNodePointerImplProvider.class)
-    public void testDijkstra(List<NodePointerImpl> nodePointers) throws NoSuchFieldException, IllegalAccessException {
+    public void testDijkstra(List<NodePointerImpl> nodePointers) {
 
-        Dijkstra<Integer, Integer> dijkstra = createInstance();
+        Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
 
         NodePointerImpl startNode = nodePointers.get(0);
         startNode.setDistance(0);
@@ -235,7 +227,7 @@ public class DijkstraTest {
 
         Field queue = Dijkstra.class.getDeclaredField("queue");
         queue.setAccessible(true);
-        queue.set(dijkstra, new PriorityQueueImpl<>(NODE_POINTER_CMP));
+        queue.set(dijkstra, new PriorityQueueImpl<>((Comparator<NodePointer<Integer, Integer>>) (o1, o2) -> CMP.compare(o1.getDistance(), o2.getDistance())));
 
         Field comparator = Dijkstra.class.getDeclaredField("comparator");
         comparator.setAccessible(true);

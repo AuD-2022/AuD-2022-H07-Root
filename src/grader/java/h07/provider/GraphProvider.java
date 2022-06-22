@@ -37,7 +37,9 @@ public class GraphProvider extends AbstractProvider {
                     GraphNode<Integer> randomNode = nodes.get(RANDOM.nextInt(nodeCount));
                     while (randomNode == node) randomNode = nodes.get(RANDOM.nextInt(nodeCount));
 
-                    node.getOutgoingArcs().add(new GraphArc<>(RANDOM.nextInt(MAX_NODE_DISTANCE + 1), randomNode));
+                    GraphNode<Integer> finalRandomNode = randomNode;
+                    if (node.getOutgoingArcs().stream().noneMatch(existingArc -> existingArc.getDestination() == finalRandomNode))
+                        node.getOutgoingArcs().add(new GraphArc<>(RANDOM.nextInt(MAX_NODE_DISTANCE + 1), randomNode));
                 }
             }
 
