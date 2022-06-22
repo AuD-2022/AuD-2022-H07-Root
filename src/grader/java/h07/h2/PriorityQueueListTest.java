@@ -109,7 +109,7 @@ public class PriorityQueueListTest {
         for (int i = 0; i < TEST_ITERATIONS; i++) {
             QueueEntry nextElement = getRandomElement(list);
 
-            assertPositionCorrect(list, nextElement, queue.getPosition(nextElement) - 1);
+            assertPositionCorrect(list, nextElement, queue.getPosition(nextElement));
             assertPriorityListEquals(list, queue.getInternalList());
         }
 
@@ -139,7 +139,7 @@ public class PriorityQueueListTest {
     }
 
     @Test
-    public void testAll() throws NoSuchFieldException, IllegalAccessException {
+    public void testAll() {
         PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(CMP);
 
         assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "return value of contains not correct");
@@ -161,18 +161,18 @@ public class PriorityQueueListTest {
             queue.add(nextElement);
             inserted.add(nextElement);
             assertTrue(queue.contains(nextElement), "return value of contains not correct");
-            assertPositionCorrect(queue.getInternalList(), nextElement, queue.getPosition(nextElement) - 1);
+            assertPositionCorrect(queue.getInternalList(), nextElement, queue.getPosition(nextElement));
             assertPriorityListEquals(inserted, queue.getInternalList());
         }
 
         return inserted;
     }
 
-    private void testDeleteAll(PriorityQueueList<QueueEntry> queue, List<QueueEntry> inserted) throws NoSuchFieldException, IllegalAccessException {
+    private void testDeleteAll(PriorityQueueList<QueueEntry> queue, List<QueueEntry> inserted) {
         for (int i = 0; i < HEAP_CAPACITY; i++) {
             QueueEntry nextElement = inserted.remove(RANDOM.nextInt(inserted.size()));
             assertTrue(queue.contains(nextElement), "return value of contains not correct");
-            assertPositionCorrect(queue.getInternalList(), nextElement, queue.getPosition(nextElement) - 1);
+            assertPositionCorrect(queue.getInternalList(), nextElement, queue.getPosition(nextElement));
             queue.delete(nextElement);
             assertFalse(queue.contains(nextElement), "return value of contains not correct");
             assertEquals(-1, queue.getPosition(nextElement), "return value of getPosition not correct");
