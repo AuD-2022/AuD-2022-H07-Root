@@ -44,9 +44,9 @@ public class PriorityQueueListTest {
     public void testConstructor() {
         PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(CMP);
 
-        assertEquals(CMP, queue.getPriorityComparator());
-        assertInstanceOf(LinkedList.class, queue.getInternalList());
-        assertEquals(0, queue.getInternalList().size());
+        assertEquals(CMP, queue.getPriorityComparator(), "the priorityComparator attribute does not have the correct value");
+        assertInstanceOf(LinkedList.class, queue.getInternalList(), "the queue attribute does not have the correct dynamic type");
+        assertEquals(0, queue.getInternalList().size(), "the queue is not empty");
     }
 
     @Test
@@ -73,11 +73,11 @@ public class PriorityQueueListTest {
         for (int i = 0; i < TEST_ITERATIONS; i++) {
             QueueEntry nextElement = getRandomElement(list);
             list.remove(nextElement);
-            assertEquals(nextElement, queue.delete(nextElement));
+            assertEquals(nextElement, queue.delete(nextElement), "the method delete(T) did not return the correct item");
             assertPriorityListEquals(list, queue.getInternalList());
         }
 
-        assertNull(queue.delete(QueueEntry.UNUSED_ENTRY));
+        assertNull(queue.delete(QueueEntry.UNUSED_ENTRY), "the method delete(T) did not return the correct item");
         assertPriorityListEquals(list, queue.getInternalList());
     }
 
@@ -86,8 +86,9 @@ public class PriorityQueueListTest {
     public void testGetFront(List<QueueEntry> list) throws NoSuchFieldException, IllegalAccessException {
         PriorityQueueList<QueueEntry> queue= initializeQueue(list);
 
-        assertEquals(list.get(0), queue.getFront());
-        assertNull(initializeQueue(new LinkedList<>()).deleteFront());
+        assertEquals(list.get(0), queue.getFront(), "the method getFront() did not return the correct item");
+        assertNull(initializeQueue(new LinkedList<>()).getFront(), "the method getFront() did not return the correct item");
+        assertPriorityListEquals(list, queue.getInternalList());
     }
 
     @ParameterizedTest
@@ -95,10 +96,11 @@ public class PriorityQueueListTest {
     public void testDeleteFront(List<QueueEntry> list) throws NoSuchFieldException, IllegalAccessException {
         PriorityQueueList<QueueEntry> queue= initializeQueue(list);
 
-        assertEquals(list.remove(0), queue.deleteFront());
+        assertEquals(list.remove(0), queue.deleteFront(), "the method deleteFront() did not return the correct item");
         assertPriorityListEquals(list, queue.getInternalList());
 
-        assertNull(initializeQueue(new LinkedList<>()).deleteFront());
+        assertNull(initializeQueue(new LinkedList<>()).deleteFront(), "the method deleteFront() did not return the correct item");
+        assertPriorityListEquals(list, queue.getInternalList());
     }
 
     @ParameterizedTest
@@ -113,8 +115,9 @@ public class PriorityQueueListTest {
             assertPriorityListEquals(list, queue.getInternalList());
         }
 
-        assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY));
+        assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), "the method getPosition(T) did not return the correct value");
 
+        assertPriorityListEquals(list, queue.getInternalList());
     }
 
     @ParameterizedTest
@@ -123,10 +126,12 @@ public class PriorityQueueListTest {
         PriorityQueueList<QueueEntry> queue= initializeQueue(list);
 
         for (int i = 0; i < TEST_ITERATIONS; i++) {
-            assertTrue(queue.contains(getRandomElement(list)));
+            assertTrue(queue.contains(getRandomElement(list)), "the methode contains(T) did not return the correct value");
         }
 
-        assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY));
+        assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "the methode contains(T) did not return the correct value");
+
+        assertPriorityListEquals(list, queue.getInternalList());
     }
 
     @ParameterizedTest
@@ -135,16 +140,17 @@ public class PriorityQueueListTest {
         PriorityQueueList<QueueEntry> queue= initializeQueue(list);
 
         queue.clear();
-        assertEquals(0, queue.getInternalList().size());
+
+        assertEquals(0, queue.getInternalList().size(), "the queue is not empty");
     }
 
     @Test
     public void testAll() {
         PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(CMP);
 
-        assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "return value of contains not correct");
-        assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), "return value of getPosition not correct");
-        assertNull(queue.getFront(), "return value of getFront not correct");
+        assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "the method contains(T) did not return the correct value");
+        assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), "the method getPosition(T) did not return the correct value");
+        assertNull(queue.getFront(), "the method getFront() did not return the correct value");
 
         testDeleteAll(queue, testAddAll(queue));
         testAddAll(queue);
@@ -156,11 +162,11 @@ public class PriorityQueueListTest {
         List<QueueEntry> inserted = new ArrayList<>();
         for (int i = 0; i < HEAP_CAPACITY; i++) {
             QueueEntry nextElement = QueueEntry.createRandomEntry();
-            assertFalse(queue.contains(nextElement), "return value of contains not correct");
-            assertEquals(-1, queue.getPosition(nextElement), "return value of getPosition not correct");
+            assertFalse(queue.contains(nextElement), "the method contains(T) did not return the correct value");
+            assertEquals(-1, queue.getPosition(nextElement), "the method getPosition(T) did not return the correct value");
             queue.add(nextElement);
             inserted.add(nextElement);
-            assertTrue(queue.contains(nextElement), "return value of contains not correct");
+            assertTrue(queue.contains(nextElement), "the method contains(T) did not return the correct value");
             assertPositionCorrect(queue.getInternalList(), nextElement, queue.getPosition(nextElement));
             assertPriorityListEquals(inserted, queue.getInternalList());
         }
@@ -171,11 +177,11 @@ public class PriorityQueueListTest {
     private void testDeleteAll(PriorityQueueList<QueueEntry> queue, List<QueueEntry> inserted) {
         for (int i = 0; i < HEAP_CAPACITY; i++) {
             QueueEntry nextElement = inserted.remove(RANDOM.nextInt(inserted.size()));
-            assertTrue(queue.contains(nextElement), "return value of contains not correct");
+            assertTrue(queue.contains(nextElement), "the method contains(T) did not return the correct value");
             assertPositionCorrect(queue.getInternalList(), nextElement, queue.getPosition(nextElement));
             queue.delete(nextElement);
-            assertFalse(queue.contains(nextElement), "return value of contains not correct");
-            assertEquals(-1, queue.getPosition(nextElement), "return value of getPosition not correct");
+            assertFalse(queue.contains(nextElement), "the method contains(T) did not return the correct value");
+            assertEquals(-1, queue.getPosition(nextElement), "the method getPosition(T) did not return the correct value");
             assertPriorityListEquals(inserted, queue.getInternalList());
         }
     }

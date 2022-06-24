@@ -5,10 +5,14 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import static h07.provider.AbstractProvider.RANDOM;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class QueueEntry {
 
-    public static final Comparator<QueueEntry> CMP = Comparator.comparingInt((QueueEntry a) -> a.value % 10);
+    public static final Comparator<QueueEntry> CMP = Comparator.comparingInt((QueueEntry queueEntry) -> {
+        if (queueEntry == null) fail("the queueEntry that was passed to the comparator is null");
+        return queueEntry.value % 10;
+    });
     public static final int MAX_VALUE = 100;
     public static final QueueEntry UNUSED_ENTRY = new QueueEntry(MAX_VALUE + 1, -1);
     public static int nextID = 0;

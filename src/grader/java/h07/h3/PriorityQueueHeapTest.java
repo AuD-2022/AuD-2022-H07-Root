@@ -42,10 +42,12 @@ public class PriorityQueueHeapTest {
     @Test
     public void testConstructor() throws NoSuchFieldException, IllegalAccessException {
         PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(CMP, HEAP_CAPACITY);
-        assertEquals(CMP, queue.getPriorityComparator());
-        assertEquals(HEAP_CAPACITY, queue.getInternalHeap().length);
-        assertEquals(HEAP_CAPACITY, Arrays.stream(queue.getInternalHeap()).filter(Objects::isNull).count());
-        assertEquals(0, getIndexMap(queue).size());
+        assertEquals(CMP, queue.getPriorityComparator(), "the priorityComparator attribute does not have the correct value");
+        assertNotNull(queue.getInternalHeap(), "the heap array is null");
+        assertEquals(HEAP_CAPACITY, queue.getInternalHeap().length, "the heap array does not have the correct value");
+        assertEquals(HEAP_CAPACITY, Arrays.stream(queue.getInternalHeap()).filter(Objects::isNull).count(), "the heap array is not empty");
+        assertNotNull(getIndexMap(queue), "the indexMap is null");
+        assertEquals(0, getIndexMap(queue).size(), "the indexMap is not empty");
     }
 
     @Test
@@ -81,7 +83,7 @@ public class PriorityQueueHeapTest {
 
         for (int i = 0; i < TEST_ITERATIONS; i++) {
             QueueEntry nextElement = getRandomElement(getHeap(queue), entries.size());
-            assertEquals(nextElement, queue.delete(nextElement));
+            assertEquals(nextElement, queue.delete(nextElement), "the method delete(T) did not return the correct value");
             entries.remove(nextElement);
             assertArrayDoesNotContains(getHeap(queue), nextElement, "the heap array contains the removed element");
             assertFalse(getIndexMap(queue).containsKey(nextElement), "the indexMap contains an entry for the removed element");
@@ -97,13 +99,14 @@ public class PriorityQueueHeapTest {
 
         for (int i = 0; i < TEST_ITERATIONS; i++) {
             QueueEntry nextElement = getRandomElement(getHeap(queue), entries.size());
-            assertEquals(nextElement, queue.delete(nextElement));
+            assertEquals(nextElement, queue.delete(nextElement), "the method delete(T) did not return the correct value");
             entries.remove(nextElement);
             assertPriorityQueueCorrect(entries, queue);
         }
 
-        assertNull(queue.delete(QueueEntry.UNUSED_ENTRY));
+        assertNull(queue.delete(QueueEntry.UNUSED_ENTRY), "the method delete(T) did not return the correct value");
         assertPriorityQueueCorrect(entries, queue);
+        testDeleteUpwardCorrectionEdgeCase();
     }
 
     @Test
@@ -123,7 +126,7 @@ public class PriorityQueueHeapTest {
 
         PriorityQueueHeap<QueueEntry> queue = initializeQueue(heap);
 
-        assertEquals(toDelete, queue.delete(toDelete));
+        assertEquals(toDelete, queue.delete(toDelete), "the method delete(T) did not return the correct value");
         assertPriorityQueueCorrect(entries, queue);
     }
 
@@ -131,10 +134,11 @@ public class PriorityQueueHeapTest {
     @ArgumentsSource(QueueEntryHeapProvider.class)
     public void testGetFront(QueueEntry[] heap) throws NoSuchFieldException, IllegalAccessException {
         PriorityQueueHeap<QueueEntry> queue = initializeQueue(heap);
-        assertEquals(heap[0], queue.getFront());
+        List<QueueEntry> entries = Arrays.stream(heap).filter(Objects::nonNull).collect(Collectors.toList());
 
+        assertEquals(heap[0], queue.getFront(), "the method getFront() did not return the correct value");
         assertNull(initializeQueue(new QueueEntry[HEAP_CAPACITY]).getFront());
-
+        assertPriorityQueueCorrect(entries, queue);
     }
 
     @ParameterizedTest
@@ -143,12 +147,11 @@ public class PriorityQueueHeapTest {
         PriorityQueueHeap<QueueEntry> queue = initializeQueue(heap);
         List<QueueEntry> entries = Arrays.stream(heap).filter(Objects::nonNull).collect(Collectors.toList());
 
-        assertEquals(heap[0], queue.deleteFront());
+        assertEquals(heap[0], queue.deleteFront(), "the method deleteFront() did not return the correct value");
         entries.remove(0);
         assertPriorityQueueCorrect(entries, queue);
 
-        assertNull(initializeQueue(new QueueEntry[HEAP_CAPACITY]).deleteFront());
-        assertPriorityQueueCorrect(entries, queue);
+        assertNull(initializeQueue(new QueueEntry[HEAP_CAPACITY]).deleteFront(), "the method deleteFront() did not return the correct value");
     }
 
     @ParameterizedTest
@@ -162,7 +165,7 @@ public class PriorityQueueHeapTest {
             assertPositionCorrect(entries, nextElement, queue.getPosition(nextElement));
         }
 
-        assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY));
+        assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), "the method getPosition(T) did not return the correct value");
     }
 
     @ParameterizedTest
@@ -173,10 +176,10 @@ public class PriorityQueueHeapTest {
 
         for (int i = 0; i < TEST_ITERATIONS; i++) {
             QueueEntry nextElement = getRandomElement(heap, entries.size());
-            assertTrue(queue.contains(nextElement));
+            assertTrue(queue.contains(nextElement), "the method contains(T) did not return the correct value");
         }
 
-        assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY));
+        assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "the method contains(T) did not return the correct value");
     }
 
     @ParameterizedTest
@@ -186,7 +189,7 @@ public class PriorityQueueHeapTest {
 
         queue.clear();
 
-        //assertHeapCorrect(getHeap(queue), new ArrayList<>());
+        assertEquals(0, getSize(queue), "the attribute size does not have the correct value");
         assertIndexMapCorrect(getHeap(queue), getIndexMap(queue), getSize(queue));
     }
 
@@ -194,9 +197,9 @@ public class PriorityQueueHeapTest {
     public void testAll() throws NoSuchFieldException, IllegalAccessException {
         PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(CMP, HEAP_CAPACITY);
 
-        assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "return value of contains not correct");
-        assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), "return value of getPosition not correct");
-        assertNull(queue.getFront(), "return value of getFront not correct");
+        assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "the method contains(T) did not return the correct value");
+        assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), "the method getPosition(T) did not return the correct value");
+        assertNull(queue.getFront(), "the method getFront() did not return the correct value");
 
         testDeleteAll(queue, testAddAll(queue));
         testAddAll(queue);
@@ -210,11 +213,11 @@ public class PriorityQueueHeapTest {
         List<QueueEntry> inserted = new ArrayList<>();
         for (int i = 0; i < HEAP_CAPACITY; i++) {
             QueueEntry nextElement = QueueEntry.createRandomEntry();
-            assertFalse(queue.contains(nextElement), "return value of contains not correct");
-            assertEquals(-1, queue.getPosition(nextElement), "return value of getPosition not correct");
+            assertFalse(queue.contains(nextElement), "the method contains(T) did not return the correct value");
+            assertEquals(-1, queue.getPosition(nextElement), "the method getPosition(T) did not return the correct value");
             queue.add(nextElement);
             inserted.add(nextElement);
-            assertTrue(queue.contains(nextElement), "return value of contains not correct");
+            assertTrue(queue.contains(nextElement), "the method contains(T) did not return the correct value");
             assertPositionCorrect(getHeap(queue), nextElement, queue.getPosition(nextElement), inserted.size());
             assertPriorityQueueCorrect(inserted, queue);
         }
@@ -225,11 +228,11 @@ public class PriorityQueueHeapTest {
     private void testDeleteAll(PriorityQueueHeap<QueueEntry> queue, List<QueueEntry> inserted) throws NoSuchFieldException, IllegalAccessException {
         for (int i = 0; i < HEAP_CAPACITY; i++) {
             QueueEntry nextElement = inserted.remove(RANDOM.nextInt(inserted.size()));
-            assertTrue(queue.contains(nextElement), "return value of contains not correct");
+            assertTrue(queue.contains(nextElement), "the method contains(T) did not return the correct value");
             assertPositionCorrect(getHeap(queue), nextElement, queue.getPosition(nextElement), inserted.size());
             queue.delete(nextElement);
-            assertFalse(queue.contains(nextElement), "return value of contains not correct");
-            assertEquals(-1, queue.getPosition(nextElement), "return value of getPosition not correct");
+            assertFalse(queue.contains(nextElement), "the method contains(T) did not return the correct value");
+            assertEquals(-1, queue.getPosition(nextElement), "the method getPosition(T) did not return the correct value");
             assertPriorityQueueCorrect(inserted, queue);
         }
     }

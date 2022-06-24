@@ -22,7 +22,7 @@ public class Assertions {
         int upperIndex = (int) (entries.size() - entries.stream().filter(j -> CMP.compare(j, entry) < 0).count());
         assertBetween(lowerIndex, upperIndex, actual,
             "incorrect value for position of %s."
-                .formatted(Objects.toString(entry)));
+                .formatted(Objects.toString(entry)), lowerIndex == actual + 1);
     }
 
     public static void assertPositionCorrect(QueueEntry[] entries, QueueEntry entry, int actual, int size) {
@@ -30,7 +30,7 @@ public class Assertions {
         int upperIndex = (int) (entries.length - Arrays.stream(entries).limit(size).filter(j -> CMP.compare(j, entry) < 0).count());
         assertBetween(lowerIndex, upperIndex, actual,
             "incorrect value for position of %s."
-                .formatted(Objects.toString(entry)));
+                .formatted(Objects.toString(entry)), lowerIndex == actual + 1);
     }
 
     public static void assertPriorityListEquals(List<QueueEntry> expected, List<QueueEntry> actual) {
@@ -58,10 +58,10 @@ public class Assertions {
 
     public static void assertIndexMapCorrect(QueueEntry[] heap, Map<QueueEntry, Integer> indexMap, QueueEntry key) {
 
-        assertTrue(indexMap.containsKey(key), "the indexMap does not contain the inserted element as a key");
+        assertTrue(indexMap.containsKey(key), "the indexMap does not have the entry %s as a key".formatted(key.toString()));
         assertBetween(0, heap.length -1, indexMap.get(key),
             "invalid value for entry %s in IndexMap."
-                .formatted(Objects.toString(key)));
+                .formatted(Objects.toString(key)), false);
         assertEquals(key, heap[indexMap.get(key)],
             "the heap array does not contain the expected element at the index specified in the indexMap. Expected %s, actual: %s"
                 .formatted(Objects.toString(key), Objects.toString(heap[indexMap.get(key)])));
@@ -112,9 +112,9 @@ public class Assertions {
     }
 
 
-    public static void assertBetween(int min, int max, int actual, String message) {
+    public static void assertBetween(int min, int max, int actual, String message, boolean note) {
         assertTrue(min <= actual && max >= actual,
-            message + " Expected value between %d and %d, actual %d".formatted(min, max, actual));
+            message + " Expected value between %d and %d, actual %d".formatted(min, max, actual) + (note ? ". Note that method getPosition() is supposed to start counting from 1 " : ""));
     }
 
     public static void assertBetween(double min, double max, double actual, String message) {
