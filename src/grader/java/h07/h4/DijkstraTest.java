@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static h07.provider.AbstractProvider.RANDOM;
+import static h07.TestConstants.RANDOM;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static h07.Assertions.*;
@@ -38,8 +38,10 @@ public class DijkstraTest {
         usedQueue = toReturn;
         return toReturn;
     };
+
     public static final BiFunction<Integer, Integer, Integer> DISTANCE_FUNCTION = (Integer a, Integer b) -> a == null ? b : a + b;
-    public static final Comparator<Integer> CMP = (i1, i2) -> {
+
+    public static final Comparator<Integer> NODE_CMP = (i1, i2) -> {
         if (i1 == null || i2 == null) fail("a value passed to the comparator was null");
         return Comparator.<Integer>reverseOrder().compare(i1, i2);
     };
@@ -69,12 +71,12 @@ public class DijkstraTest {
     @Test
     public void testConstructor() throws NoSuchFieldException, IllegalAccessException {
         queueFactoryInvoked = false;
-        Dijkstra<Integer, Integer> instance = new Dijkstra<>(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
+        Dijkstra<Integer, Integer> instance = new Dijkstra<>(NODE_CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
 
         assertTrue(queueFactoryInvoked, "the queueFactory wasn't used to create the queue");
         assertQueueFactoryComparatorCorrect(queueFactoryInvokedWith);
 
-        assertSame(CMP, getComparator(instance), "the attribute comparator does not have the correct value");
+        assertSame(NODE_CMP, getComparator(instance), "the attribute comparator does not have the correct value");
         assertSame(DISTANCE_FUNCTION, getDistanceFunction(instance), "the attribute distanceFunction does not have the correct value");
         assertSame(usedQueue, getPriorityQueue(instance), "the attribute queue does not have the correct value");
     }
@@ -187,7 +189,7 @@ public class DijkstraTest {
         Dijkstra<Integer, Integer> dijkstra = createInstance();
 
         NodePointerImpl startNode = nodePointers.get(0);
-        startNode.setDistance(0);
+        startNode.setDistance(10);
 
         HashMap<NodePointer<Integer, Integer>, Integer> expectedDistance = new HashMap<>();
         HashMap<NodePointer<Integer, Integer>, NodePointer<Integer, Integer>> expectedPredecessor = new HashMap<>();
@@ -205,7 +207,7 @@ public class DijkstraTest {
     @ArgumentsSource(GraphToNodePointerImplProvider.class)
     public void testDijkstra(List<NodePointerImpl> nodePointers) {
 
-        Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
+        Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(NODE_CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
 
         NodePointerImpl startNode = nodePointers.get(0);
         startNode.setDistance(10);
@@ -223,15 +225,15 @@ public class DijkstraTest {
     }
 
     private Dijkstra<Integer, Integer> createInstance() throws NoSuchFieldException, IllegalAccessException {
-        Dijkstra<Integer, Integer> dijkstra = spy(new Dijkstra<>(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY));
+        Dijkstra<Integer, Integer> dijkstra = spy(new Dijkstra<>(NODE_CMP, DISTANCE_FUNCTION, QUEUE_FACTORY));
 
         Field queue = Dijkstra.class.getDeclaredField("queue");
         queue.setAccessible(true);
-        queue.set(dijkstra, new PriorityQueueImpl<>((Comparator<NodePointer<Integer, Integer>>) (o1, o2) -> CMP.compare(o1.getDistance(), o2.getDistance())));
+        queue.set(dijkstra, new PriorityQueueImpl<>((Comparator<NodePointer<Integer, Integer>>) (o1, o2) -> NODE_CMP.compare(o1.getDistance(), o2.getDistance())));
 
         Field comparator = Dijkstra.class.getDeclaredField("comparator");
         comparator.setAccessible(true);
-        comparator.set(dijkstra, CMP);
+        comparator.set(dijkstra, NODE_CMP);
 
         Field distanceFunction = Dijkstra.class.getDeclaredField("distanceFunction");
         distanceFunction.setAccessible(true);
@@ -246,7 +248,7 @@ public class DijkstraTest {
                                                                   List<NodePointerImpl> nodePointers,
                                                                   Predicate<NodePointer<Integer, Integer>> predicate) {
         //get expected solution
-        DijkstraImpl solution = new DijkstraImpl(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
+        DijkstraImpl solution = new DijkstraImpl(NODE_CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
         if (predicate == null) solution.initialize(startNode);
         else solution.initialize(startNode, predicate);
         List<NodePointer<Integer, Integer>> expected = solution.run();

@@ -7,12 +7,13 @@ import h07.implementation.ArcPointerImpl;
 import h07.implementation.NodePointerImpl;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class GraphToNodePointerImplProvider extends AbstractProvider {
+public class GraphToNodePointerImplProvider implements ArgumentsProvider {
 
     @SuppressWarnings("unchecked")
     @Override

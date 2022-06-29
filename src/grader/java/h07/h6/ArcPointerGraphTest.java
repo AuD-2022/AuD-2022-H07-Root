@@ -2,7 +2,6 @@ package h07.h6;
 
 
 import h07.*;
-import h07.implementation.NodePointerImpl;
 import h07.provider.GraphToGraphPointerMapsProvider;
 import h07.transformer.MethodInterceptor;
 import org.junit.jupiter.api.AfterEach;
@@ -15,9 +14,9 @@ import java.util.HashMap;
 
 import static h07.Assertions.assertArcPointerGraphEquals;
 import static h07.Assertions.assertNodePointerGraphEquals;
-import static h07.provider.AbstractProvider.RANDOM;
+import static h07.TestConstants.RANDOM;
 import static org.junit.jupiter.api.Assertions.*;
-import static h07.provider.GraphProvider.MAX_NODE_DISTANCE;
+import static h07.TestConstants.MAX_NODE_DISTANCE;
 
 @TestForSubmission("h07")
 public class ArcPointerGraphTest extends GraphPointerTest {

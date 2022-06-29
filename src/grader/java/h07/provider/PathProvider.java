@@ -1,19 +1,18 @@
 package h07.provider;
 
-
 import h07.implementation.ArcPointerImpl;
 import h07.implementation.NodePointerImpl;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class PathProvider extends AbstractProvider {
+import static h07.TestConstants.*;
 
-    private static final int MIN_PATH_LENGTH = 10;
-    private static final int MAX_PATH_LENGTH = 50;
+public class PathProvider implements ArgumentsProvider {
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {

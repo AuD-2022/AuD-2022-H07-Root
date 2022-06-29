@@ -1,10 +1,8 @@
 package h07.h7;
 
 import h07.*;
-import h07.implementation.NodePointerImpl;
 import h07.provider.GraphToAdjacencyMatrixPointerProvider;
 import h07.transformer.MethodInterceptor;
-import kotlin.Triple;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,8 +11,8 @@ import org.sourcegrade.jagr.api.rubric.TestForSubmission;
 
 import static h07.Assertions.assertArcPointerAdjacencyMatrixEquals;
 import static h07.Assertions.assertNodePointerAdjacencyMatrixEquals;
-import static h07.provider.GraphProvider.MAX_NODE_DISTANCE;
-import static h07.provider.AbstractProvider.RANDOM;
+import static h07.TestConstants.MAX_NODE_DISTANCE;
+import static h07.TestConstants.RANDOM;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;

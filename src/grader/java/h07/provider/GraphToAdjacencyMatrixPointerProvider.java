@@ -4,6 +4,7 @@ import h07.*;
 import h07.implementation.GraphAdjacencyMatrixConverter;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -12,7 +13,7 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
-public class GraphToAdjacencyMatrixPointerProvider extends AbstractProvider {
+public class GraphToAdjacencyMatrixPointerProvider implements ArgumentsProvider {
 
     @SuppressWarnings("unchecked")
     @Override

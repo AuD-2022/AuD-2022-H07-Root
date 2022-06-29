@@ -14,13 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static h07.Assertions.assertBetween;
+import static h07.TestConstants.MAX_ARC_LENGTH_POINT;
+import static h07.TestConstants.POINTS_COUNT;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestForSubmission("h07")
 public class Point2DCollectionTest {
-
-    public static final int POINT_COUNT = 25;
-    public static final int MAX_ARC_LENGTH = 10;
 
     @BeforeEach
     public void reset() {
@@ -41,15 +40,15 @@ public class Point2DCollectionTest {
         Point2D from = new Point2D(0, 0);
         Point2D to = new Point2D(10, 10);
 
-        List<Double> values = new ArrayList<>(POINT_COUNT*2);
+        List<Double> values = new ArrayList<>(POINTS_COUNT*2);
 
-        Point2DCollection collection = new Point2DCollection(POINT_COUNT, from, to, MAX_ARC_LENGTH);
+        Point2DCollection collection = new Point2DCollection(POINTS_COUNT, from, to, MAX_ARC_LENGTH_POINT);
 
-        assertEquals(MAX_ARC_LENGTH, getMaxArcLength(collection), "the attribute maxArcLength does not have the correct value");
+        assertEquals(MAX_ARC_LENGTH_POINT, getMaxArcLength(collection), "the attribute maxArcLength does not have the correct value");
 
         List<Point2D> actualPoints = getPoints(collection);
         assertNotNull(actualPoints, "the list points is null");
-        assertEquals(POINT_COUNT, actualPoints.size(), "the list points does not have the correct size");
+        assertEquals(POINTS_COUNT, actualPoints.size(), "the list points does not have the correct size");
         for (Point2D point : actualPoints) {
             assertBetween(from.getX(), to.getX(), point.getX(), "incorrect x-value for point at position %d in points list. ".formatted(actualPoints.indexOf(point)));
             assertBetween(from.getY(), to.getY(), point.getY(), "incorrect y-value for point at position %d in points list. ".formatted(actualPoints.indexOf(point)));

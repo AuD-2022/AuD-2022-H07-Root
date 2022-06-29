@@ -5,17 +5,15 @@ import h07.GraphArc;
 import h07.GraphNode;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class GraphProvider extends AbstractProvider {
+import static h07.TestConstants.*;
 
-    public static final int MIN_NODE_COUNT = 5; // >= 2
-    public static final int MAX_NODE_COUNT = 5;
-    public static final int MAX_OUTGOING_ARC_COUNT = 2;
-    public static final int MAX_NODE_DISTANCE = 100;
+public class GraphProvider implements ArgumentsProvider {
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {

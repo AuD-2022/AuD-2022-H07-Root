@@ -3,19 +3,16 @@ package h07.provider;
 import h07.*;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
+import static h07.TestConstants.*;
 
-public class Pointer2DPointerProvider extends AbstractProvider {
-
-    public static final int POINTS_COUNT = 20;
-    public static final int MAX_ARC_LENGTH = 10;
-    public static final int MIN_CORD = -10;
-    public static final int MAX_CORD = 10;
+public class Pointer2DPointerProvider implements ArgumentsProvider {
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
@@ -27,10 +24,10 @@ public class Pointer2DPointerProvider extends AbstractProvider {
 
             for (int j = 0; j < POINTS_COUNT - 1; j++) existingPoints.add(new Point2D(RANDOM.nextDouble(MIN_CORD, MAX_CORD), RANDOM.nextDouble(MIN_CORD, MAX_CORD)));
             //add a point with MaxArcLength distance to the first point
-            existingPoints.add(new Point2D(existingPoints.get(0).getX(), existingPoints.get(0).getY() + MAX_ARC_LENGTH));
+            existingPoints.add(new Point2D(existingPoints.get(0).getX(), existingPoints.get(0).getY() + MAX_ARC_LENGTH_POINT));
 
 
-            Point2DCollection collection = new Point2DCollection(existingPoints, MAX_ARC_LENGTH);
+            Point2DCollection collection = new Point2DCollection(existingPoints, MAX_ARC_LENGTH_POINT);
 
             HashMap<Point2D, NodePointerPoint2D> existingNodePointers = new HashMap<>();
             HashMap<Pair<Point2D, Point2D>, ArcPointerPoint2D> existingArcPointers = new HashMap<>();
@@ -44,7 +41,7 @@ public class Pointer2DPointerProvider extends AbstractProvider {
             for (Point2D from : existingPoints) {
                 for (Point2D to : existingPoints) {
                     double length = Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2));
-                    if (length > MAX_ARC_LENGTH) continue;
+                    if (length > MAX_ARC_LENGTH_POINT) continue;
                     ArcPointerPoint2D mock = spy(new ArcPointerPoint2D(existingNodePointers, existingArcPointers, from, to, collection));
                     when(mock.getLength()).thenReturn(length);
                     when(mock.destination()).thenReturn(existingNodePointers.get(to));

@@ -4,17 +4,16 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static h07.provider.AbstractProvider.RANDOM;
+import static h07.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class QueueEntry {
 
-    public static final Comparator<QueueEntry> CMP = Comparator.comparingInt((QueueEntry queueEntry) -> {
+    public static final Comparator<QueueEntry> QUEUE_ENTRY_CMP = Comparator.comparingInt((QueueEntry queueEntry) -> {
         if (queueEntry == null) fail("a queueEntry that was passed to the comparator is null");
         return queueEntry.value % 10;
     });
-    public static final int MAX_VALUE = 100;
-    public static final QueueEntry UNUSED_ENTRY = new QueueEntry(MAX_VALUE + 1, -1);
+    public static final QueueEntry UNUSED_ENTRY = new QueueEntry(MAX_QUEUE_ENTRY_VALUE + 1, -1);
     public static int nextID = 0;
 
     public final int value;
@@ -35,7 +34,7 @@ public class QueueEntry {
     }
 
     public static QueueEntry createRandomEntry() {
-        return new QueueEntry(RANDOM.nextInt(MAX_VALUE + 1));
+        return new QueueEntry(RANDOM.nextInt(MAX_QUEUE_ENTRY_VALUE + 1));
     }
 
     public static Stream<QueueEntry> createRandomEntryStream() {

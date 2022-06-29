@@ -3,6 +3,7 @@ package h07.provider;
 import h07.*;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -11,7 +12,7 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class GraphToGraphPointerMapsProvider extends AbstractProvider {
+public class GraphToGraphPointerMapsProvider implements ArgumentsProvider {
 
     @SuppressWarnings("unchecked")
     @Override

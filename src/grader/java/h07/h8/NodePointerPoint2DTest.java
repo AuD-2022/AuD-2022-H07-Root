@@ -15,8 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static h07.provider.Pointer2DPointerProvider.MAX_ARC_LENGTH;
-import static h07.provider.AbstractProvider.RANDOM;
+import static h07.TestConstants.MAX_ARC_LENGTH_POINT;
+import static h07.TestConstants.RANDOM;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static h07.Assertions.*;
@@ -64,7 +64,7 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
                              Point2DCollection collection) {
 
         NodePointerPoint2D newNodePointer = new NodePointerPoint2D(existingNodePointers, existingArcPointers, new Point2D(0, 0), collection);
-        double distance = RANDOM.nextDouble(0, MAX_ARC_LENGTH);
+        double distance = RANDOM.nextDouble(0, MAX_ARC_LENGTH_POINT);
 
         newNodePointer.setDistance(distance);
         assertEquals(distance, newNodePointer.getDistance(), "the methode getDistance() did not return the correct value");
@@ -92,7 +92,7 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         Point2D point = collection.getPoints().get(0);
         List<ArcPointerPoint2D> expectedOutgoingArcs = collection.getPoints().stream()
             .filter(destination -> destination != point)
-            .filter(destination -> Math.sqrt(Math.pow(point.getX() - destination.getX(), 2) + Math.pow(point.getY() - destination.getY(), 2)) <= MAX_ARC_LENGTH)
+            .filter(destination -> Math.sqrt(Math.pow(point.getX() - destination.getX(), 2) + Math.pow(point.getY() - destination.getY(), 2)) <= MAX_ARC_LENGTH_POINT)
             .map(destination -> existingArcPointers.get(new Pair<>(point, destination)))
             .collect(Collectors.toList());
 

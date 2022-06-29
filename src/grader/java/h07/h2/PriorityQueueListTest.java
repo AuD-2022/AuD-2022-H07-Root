@@ -13,18 +13,15 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.sourcegrade.jagr.api.rubric.TestForSubmission;
 
 import static h07.Assertions.*;
-import static h07.implementation.QueueEntry.CMP;
-import static h07.provider.QueueEntryHeapProvider.HEAP_CAPACITY;
+import static h07.implementation.QueueEntry.QUEUE_ENTRY_CMP;
 import static org.junit.jupiter.api.Assertions.*;
-import static h07.provider.AbstractProvider.RANDOM;
+import static h07.TestConstants.*;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
 @TestForSubmission("h07")
 public class PriorityQueueListTest {
-
-    private static final int TEST_ITERATIONS = 5;
 
     @BeforeEach
     public void reset() {
@@ -43,21 +40,21 @@ public class PriorityQueueListTest {
 
     @Test
     public void testConstructor() {
-        PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(CMP);
+        PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(QUEUE_ENTRY_CMP);
 
-        assertEquals(CMP, queue.getPriorityComparator(), "the priorityComparator attribute does not have the correct value");
+        assertEquals(QUEUE_ENTRY_CMP, queue.getPriorityComparator(), "the priorityComparator attribute does not have the correct value");
         assertInstanceOf(LinkedList.class, queue.getInternalList(), "the queue attribute does not have the correct dynamic type");
         assertEquals(0, queue.getInternalList().size(), "the queue is not empty");
     }
 
     @Test
     public void testAdd() throws NoSuchFieldException, IllegalAccessException {
-        PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(CMP);
+        PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(QUEUE_ENTRY_CMP);
         setQueueList(queue, new LinkedList<>());
 
         List<QueueEntry> inserted = new LinkedList<>();
 
-        for (int i = 0; i < QueueEntryListProvider.LIST_SIZE; i++) {
+        for (int i = 0; i < LIST_SIZE; i++) {
             QueueEntry item = QueueEntry.createRandomEntry();
             queue.add(item);
             inserted.add(item);
@@ -147,7 +144,7 @@ public class PriorityQueueListTest {
 
     @Test
     public void testAll() {
-        PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(CMP);
+        PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(QUEUE_ENTRY_CMP);
 
         assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "the method contains(T) did not return the correct value");
         assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), "the method getPosition(T) did not return the correct value");
@@ -194,7 +191,7 @@ public class PriorityQueueListTest {
     }
 
     private PriorityQueueList<QueueEntry> initializeQueue(List<QueueEntry> list) throws NoSuchFieldException, IllegalAccessException {
-        PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(CMP);
+        PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(QUEUE_ENTRY_CMP);
         setQueueList(queue, new ArrayList<>(list));
         return queue;
     }

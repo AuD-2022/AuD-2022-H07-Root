@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 import static h07.Assertions.assertListContainsAllWithPredicate;
 import static h07.Assertions.assertNodePointerAdjacencyMatrixEquals;
-import static h07.provider.GraphProvider.MAX_NODE_DISTANCE;
-import static h07.provider.AbstractProvider.RANDOM;
+import static h07.TestConstants.MAX_NODE_DISTANCE;
+import static h07.TestConstants.RANDOM;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

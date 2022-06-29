@@ -9,7 +9,7 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 import static h07.h3.PriorityQueueHeapTest.*;
-import static h07.implementation.QueueEntry.CMP;
+import static h07.implementation.QueueEntry.QUEUE_ENTRY_CMP;
 import static org.junit.jupiter.api.Assertions.*;
 import static h07.h8.Point2DPointerTest.*;
 import static h07.h7.AdjacencyMatrixPointerTest.*;
@@ -18,16 +18,16 @@ import static h07.h6.GraphPointerTest.*;
 public class Assertions {
 
     public static void assertPositionCorrect(List<QueueEntry> entries, QueueEntry entry, int actual) {
-        int lowerIndex = (int) entries.stream().filter(j -> CMP.compare(j, entry) > 0 ).count() + 1;
-        int upperIndex = (int) (entries.size() - entries.stream().filter(j -> CMP.compare(j, entry) < 0).count());
+        int lowerIndex = (int) entries.stream().filter(j -> QUEUE_ENTRY_CMP.compare(j, entry) > 0 ).count() + 1;
+        int upperIndex = (int) (entries.size() - entries.stream().filter(j -> QUEUE_ENTRY_CMP.compare(j, entry) < 0).count());
         assertBetween(lowerIndex, upperIndex, actual,
             "incorrect value for position of %s."
                 .formatted(Objects.toString(entry)), lowerIndex == actual + 1);
     }
 
     public static void assertPositionCorrect(QueueEntry[] entries, QueueEntry entry, int actual, int size) {
-        int lowerIndex = (int) Arrays.stream(entries).limit(size).filter(j -> CMP.compare(j, entry) > 0 ).count() + 1;
-        int upperIndex = (int) (entries.length - Arrays.stream(entries).limit(size).filter(j -> CMP.compare(j, entry) < 0).count());
+        int lowerIndex = (int) Arrays.stream(entries).limit(size).filter(j -> QUEUE_ENTRY_CMP.compare(j, entry) > 0 ).count() + 1;
+        int upperIndex = (int) (entries.length - Arrays.stream(entries).limit(size).filter(j -> QUEUE_ENTRY_CMP.compare(j, entry) < 0).count());
         assertBetween(lowerIndex, upperIndex, actual,
             "incorrect value for position of %s."
                 .formatted(Objects.toString(entry)), lowerIndex == actual + 1);
@@ -43,7 +43,7 @@ public class Assertions {
         if (list.size() < 2) return;
 
         for (int i = 1; i < list.size(); i++) {
-            assertTrue(CMP.compare(list.get(i - 1), list.get(i)) >= 0, "the order of the elements in the queue is not correct");
+            assertTrue(QUEUE_ENTRY_CMP.compare(list.get(i - 1), list.get(i)) >= 0, "the order of the elements in the queue is not correct");
         }
     }
 
@@ -97,7 +97,7 @@ public class Assertions {
             QueueEntry leftChild = heap[ChildIndex];
 
             if (leftChild != null){
-                assertTrue(CMP.compare(parent, leftChild) >= 0,
+                assertTrue(QUEUE_ENTRY_CMP.compare(parent, leftChild) >= 0,
                     "heap array does not satisfy heap property for parent heap[%d] = %d and left child heap[%d] = %d"
                         .formatted(index, parent.value, ChildIndex, leftChild.value));
                 assertHeapProperty(heap, ChildIndex);

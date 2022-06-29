@@ -17,16 +17,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static h07.Assertions.*;
-import static h07.implementation.QueueEntry.CMP;
+import static h07.implementation.QueueEntry.QUEUE_ENTRY_CMP;
 import static h07.implementation.QueueEntry.createRandomEntry;
-import static h07.provider.AbstractProvider.RANDOM;
-import static h07.provider.QueueEntryHeapProvider.HEAP_CAPACITY;
+import static h07.TestConstants.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestForSubmission("h07")
 public class PriorityQueueHeapTest {
-
-    private static final int TEST_ITERATIONS = 5;
 
     @BeforeEach
     public void reset() {
@@ -41,8 +38,8 @@ public class PriorityQueueHeapTest {
 
     @Test
     public void testConstructor() throws NoSuchFieldException, IllegalAccessException {
-        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(CMP, HEAP_CAPACITY);
-        assertEquals(CMP, queue.getPriorityComparator(), "the priorityComparator attribute does not have the correct value");
+        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(QUEUE_ENTRY_CMP, HEAP_CAPACITY);
+        assertEquals(QUEUE_ENTRY_CMP, queue.getPriorityComparator(), "the priorityComparator attribute does not have the correct value");
         assertNotNull(queue.getInternalHeap(), "the heap array is null");
         assertEquals(HEAP_CAPACITY, queue.getInternalHeap().length, "the heap array does not have the correct value");
         assertEquals(HEAP_CAPACITY, Arrays.stream(queue.getInternalHeap()).filter(Objects::isNull).count(), "the heap array is not empty");
@@ -52,7 +49,7 @@ public class PriorityQueueHeapTest {
 
     @Test
     public void testAddSimple() throws NoSuchFieldException, IllegalAccessException {
-        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(CMP, HEAP_CAPACITY);
+        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(QUEUE_ENTRY_CMP, HEAP_CAPACITY);
 
         for (int i = 0; i < HEAP_CAPACITY; i++) {
             QueueEntry nextElement = createRandomEntry();
@@ -64,7 +61,7 @@ public class PriorityQueueHeapTest {
 
     @Test
     public void testAddComplex() throws NoSuchFieldException, IllegalAccessException {
-        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(CMP, HEAP_CAPACITY);
+        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(QUEUE_ENTRY_CMP, HEAP_CAPACITY);
         List<QueueEntry> inserted = new LinkedList<>();
 
         for (int i = 0; i < HEAP_CAPACITY; i++) {
@@ -195,7 +192,7 @@ public class PriorityQueueHeapTest {
 
     @Test
     public void testAll() throws NoSuchFieldException, IllegalAccessException {
-        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(CMP, HEAP_CAPACITY);
+        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(QUEUE_ENTRY_CMP, HEAP_CAPACITY);
 
         assertFalse(queue.contains(QueueEntry.UNUSED_ENTRY), "the method contains(T) did not return the correct value");
         assertEquals(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), "the method getPosition(T) did not return the correct value");
@@ -238,7 +235,7 @@ public class PriorityQueueHeapTest {
     }
 
     public PriorityQueueHeap<QueueEntry> initializeQueue(QueueEntry[] heap) throws NoSuchFieldException, IllegalAccessException {
-        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(CMP, HEAP_CAPACITY);
+        PriorityQueueHeap<QueueEntry> queue = new PriorityQueueHeap<>(QUEUE_ENTRY_CMP, HEAP_CAPACITY);
 
         setHeap(queue, heap);
 
