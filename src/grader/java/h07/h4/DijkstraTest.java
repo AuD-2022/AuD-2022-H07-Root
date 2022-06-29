@@ -208,7 +208,7 @@ public class DijkstraTest {
         Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
 
         NodePointerImpl startNode = nodePointers.get(0);
-        startNode.setDistance(0);
+        startNode.setDistance(10);
         NodePointerImpl endNode = nodePointers.get(RANDOM.nextInt(0, nodePointers.size()));
 
         Predicate<NodePointer<Integer, Integer>> predicate = node -> node == endNode;
@@ -257,7 +257,7 @@ public class DijkstraTest {
             expectedPredecessor.put(node, node.getPredecessor());
             node.reset();
         }
-        startNode.setDistance(0);
+        startNode.setDistance(10);
 
         return expected;
     }

@@ -37,7 +37,8 @@ public class PriorityQueueListTest {
         IllegalMethodsCheck.checkMethods(
             "^java/util/LinkedList.+",
             "^java/util/Comparator.+",
-            "^java/util/Iterator.+");
+            "^java/util/Iterator.+",
+            "^java/util/Collections.+");
     }
 
     @Test

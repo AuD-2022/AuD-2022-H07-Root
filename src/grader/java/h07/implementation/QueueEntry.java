@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class QueueEntry {
 
     public static final Comparator<QueueEntry> CMP = Comparator.comparingInt((QueueEntry queueEntry) -> {
-        if (queueEntry == null) fail("the queueEntry that was passed to the comparator is null");
+        if (queueEntry == null) fail("a queueEntry that was passed to the comparator is null");
         return queueEntry.value % 10;
     });
     public static final int MAX_VALUE = 100;
