@@ -15,8 +15,6 @@ public class PublicTests {
 
     public abstract static class IPriorityQueueTest<Q extends IPriorityQueue<Integer>> {
 
-        protected Q queue;
-
         @Test
         void testConstructor() {
             Q queue = newEmptyQueue();
@@ -201,11 +199,30 @@ public class PublicTests {
 
         @Override
         protected Iterable<Object> queueToIterable(PriorityQueueHeap<Integer> queue) {
-            throw new RuntimeException("This does not make any god darn sense");
-            // List<Object> iterable = new ArrayList<>();
-            // Collections.addAll(iterable, queue.getInternalHeap());
-            // iterable.removeIf(Objects::isNull);
-            // return iterable;
+            return () ->
+                new HeapIterator<>(queue);
+        }
+    }
+
+    private static class HeapIterator<T> implements Iterator<Object> {
+
+        private final PriorityQueueHeap<T> heap;
+
+        private HeapIterator(PriorityQueueHeap<T> heap) {
+            this.heap = heap;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return heap.getFront() != null;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return heap.deleteFront();
         }
     }
 }
