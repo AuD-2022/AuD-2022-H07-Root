@@ -239,32 +239,7 @@ public class PublicTests {
 
 
             public NodePointer<Double, Double> pointer() {
-                return new NodePointer<Double, Double>() {
-
-                    private double distance = 0;
-
-                    private NodePointer<Double, Double> processor = null;
-
-                    @Override
-                    public Double getDistance() {
-                        return distance;
-                    }
-
-                    @Override
-                    public void setDistance(@NotNull Double distance) {
-                        this.distance = distance;
-                    }
-
-                    @Override
-                    public @Nullable NodePointer<Double, Double> getPredecessor() {
-                        return processor;
-                    }
-
-                    @Override
-                    public void setPredecessor(@NotNull NodePointer<Double, Double> predecessor) {
-                        this.processor = predecessor;
-                    }
-
+                return new AbstractNodePointer<>() {
                     @Override
                     public Iterator<ArcPointer<Double, Double>> outgoingArcs() {
                         return switch (Node.this) {
@@ -284,29 +259,29 @@ public class PublicTests {
                                 arc(7, E));
                         };
                     }
+                };
+            }
 
-                    private ArcPointer<Double, Double> arc(double length, Node dest) {
-                        return new ArcPointer<>() {
+            private static ArcPointer<Double, Double> arc(double length, Node dest) {
+                return new ArcPointer<>() {
 
-                            private final NodePointer<Double, Double> destNode = dest.pointer();
+                    private final NodePointer<Double, Double> destNode = dest.pointer();
 
-                            @Override
-                            public Double getLength() {
-                                return length;
-                            }
-
-                            @Override
-                            public NodePointer<Double, Double> destination() {
-                                return destNode;
-                            }
-                        };
+                    @Override
+                    public Double getLength() {
+                        return length;
                     }
 
-                    @SafeVarargs
-                    public final Iterator<ArcPointer<Double, Double>> arcs(ArcPointer<Double, Double>... arcs) {
-                        return List.of(arcs).iterator();
+                    @Override
+                    public NodePointer<Double, Double> destination() {
+                        return destNode;
                     }
                 };
+            }
+
+            @SafeVarargs
+            public static Iterator<ArcPointer<Double, Double>> arcs(ArcPointer<Double, Double>... arcs) {
+                return List.of(arcs).iterator();
             }
         }
 
@@ -316,5 +291,34 @@ public class PublicTests {
         void testInitialize() {
             dijkstra.initialize(Node.A.pointer());
         }
+    }
+
+    private abstract static class AbstractNodePointer<L, D> implements NodePointer<L, D> {
+
+        private D distance;
+        private NodePointer<L, D> predecessor = null;
+
+        @Override
+        public D getDistance() {
+            return distance;
+        }
+
+        @Override
+        public void setDistance(@NotNull D distance) {
+            this.distance = distance;
+        }
+
+        @Override
+        public @Nullable NodePointer<L, D> getPredecessor() {
+            return predecessor;
+        }
+
+        @Override
+        public void setPredecessor(@NotNull NodePointer<L, D> predecessor) {
+            this.predecessor = predecessor;
+        }
+
+        @Override
+        public abstract Iterator<ArcPointer<L, D>> outgoingArcs();
     }
 }
