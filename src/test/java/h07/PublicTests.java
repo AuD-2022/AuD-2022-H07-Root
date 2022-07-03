@@ -1,5 +1,7 @@
 package h07;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
@@ -11,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class PublicTests {
 
-    private static final Comparator<Integer> CMP = Integer::compare;
-
     public abstract static class IPriorityQueueTest<Q extends IPriorityQueue<Integer>> {
+
+        protected static final Comparator<Integer> CMP = Integer::compare;
 
         @Test
         void testConstructor() {
@@ -223,6 +225,96 @@ public class PublicTests {
                 throw new NoSuchElementException();
             }
             return heap.deleteFront();
+        }
+    }
+
+    @Nested
+    class DijkstraTest {
+
+        private static final Comparator<Double> CMP = (a, b) ->
+            Double.compare(b, a);
+
+        private enum Node {
+            A, B, C, D, E, F;
+
+
+            public NodePointer<Double, Double> pointer() {
+                return new NodePointer<Double, Double>() {
+
+                    private double distance = 0;
+
+                    private NodePointer<Double, Double> processor = null;
+
+                    @Override
+                    public Double getDistance() {
+                        return distance;
+                    }
+
+                    @Override
+                    public void setDistance(@NotNull Double distance) {
+                        this.distance = distance;
+                    }
+
+                    @Override
+                    public @Nullable NodePointer<Double, Double> getPredecessor() {
+                        return processor;
+                    }
+
+                    @Override
+                    public void setPredecessor(@NotNull NodePointer<Double, Double> predecessor) {
+                        this.processor = predecessor;
+                    }
+
+                    @Override
+                    public Iterator<ArcPointer<Double, Double>> outgoingArcs() {
+                        return switch (Node.this) {
+                            case A -> arcs(
+                                arc(2, B),
+                                arc(5, D));
+                            case B -> arcs(
+                                arc(1, A),
+                                arc(4, F));
+                            case C -> arcs(
+                                arc(3, B));
+                            case D -> arcs(
+                                arc(8, C));
+                            case E -> arcs();
+                            case F -> arcs(
+                                arc(6, D),
+                                arc(7, E));
+                        };
+                    }
+
+                    private ArcPointer<Double, Double> arc(double length, Node dest) {
+                        return new ArcPointer<>() {
+
+                            private final NodePointer<Double, Double> destNode = dest.pointer();
+
+                            @Override
+                            public Double getLength() {
+                                return length;
+                            }
+
+                            @Override
+                            public NodePointer<Double, Double> destination() {
+                                return destNode;
+                            }
+                        };
+                    }
+
+                    @SafeVarargs
+                    public final Iterator<ArcPointer<Double, Double>> arcs(ArcPointer<Double, Double>... arcs) {
+                        return List.of(arcs).iterator();
+                    }
+                };
+            }
+        }
+
+        private final Dijkstra<Double, Double> dijkstra = new Dijkstra<>(CMP, Double::sum, PriorityQueueList::new);
+
+        @Test
+        void testInitialize() {
+            dijkstra.initialize(Node.A.pointer());
         }
     }
 }
