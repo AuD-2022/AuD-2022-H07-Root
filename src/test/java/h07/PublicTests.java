@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -229,67 +230,47 @@ public class PublicTests {
     }
 
     @Nested
+    class AdjacencyMatrixTest {
+
+        private enum Node { A, B, C, D, E, F }
+
+        private final Graph<Double> graph = MockGraph.graph(Node.class, node ->
+            switch (node) {
+                case A -> List.of(
+                    MockGraph.arc(2, Node.B),
+                    MockGraph.arc(5, Node.D));
+                case B -> List.of(
+                    MockGraph.arc(1, Node.A),
+                    MockGraph.arc(4, Node.F));
+                case C -> List.of(
+                    MockGraph.arc(3, Node.B));
+                case D -> List.of(
+                    MockGraph.arc(8, Node.C));
+                case E -> List.of();
+                case F -> List.of(
+                    MockGraph.arc(6, Node.D),
+                    MockGraph.arc(7, Node.E));
+            }
+        );
+
+        @Test
+        void testConstructor() {
+            System.out.println(graph);
+        }
+    }
+
+    @Nested
     class DijkstraTest {
 
         private static final Comparator<Double> CMP = (a, b) ->
             Double.compare(b, a);
 
-        private enum Node {
-            A, B, C, D, E, F;
-
-
-            public NodePointer<Double, Double> pointer() {
-                return new AbstractNodePointer<>() {
-                    @Override
-                    public Iterator<ArcPointer<Double, Double>> outgoingArcs() {
-                        return switch (Node.this) {
-                            case A -> arcs(
-                                arc(2, B),
-                                arc(5, D));
-                            case B -> arcs(
-                                arc(1, A),
-                                arc(4, F));
-                            case C -> arcs(
-                                arc(3, B));
-                            case D -> arcs(
-                                arc(8, C));
-                            case E -> arcs();
-                            case F -> arcs(
-                                arc(6, D),
-                                arc(7, E));
-                        };
-                    }
-                };
-            }
-
-            private static ArcPointer<Double, Double> arc(double length, Node dest) {
-                return new ArcPointer<>() {
-
-                    private final NodePointer<Double, Double> destNode = dest.pointer();
-
-                    @Override
-                    public Double getLength() {
-                        return length;
-                    }
-
-                    @Override
-                    public NodePointer<Double, Double> destination() {
-                        return destNode;
-                    }
-                };
-            }
-
-            @SafeVarargs
-            public static Iterator<ArcPointer<Double, Double>> arcs(ArcPointer<Double, Double>... arcs) {
-                return List.of(arcs).iterator();
-            }
-        }
-
         private final Dijkstra<Double, Double> dijkstra = new Dijkstra<>(CMP, Double::sum, PriorityQueueList::new);
 
         @Test
         void testInitialize() {
-            dijkstra.initialize(Node.A.pointer());
+            throw new RuntimeException("Impl me");
+            // dijkstra.initialize(Node.A.pointer());
         }
     }
 
@@ -320,5 +301,31 @@ public class PublicTests {
 
         @Override
         public abstract Iterator<ArcPointer<L, D>> outgoingArcs();
+    }
+
+    private static class MockGraph {
+
+        public static <E extends Enum<E>> Graph<Double> graph(Class<E> clazz, Function<E, List<Pair<Double, E>>> getArcs) {
+            Map<E, GraphNode<Double>> nodes = new EnumMap<>(clazz);
+
+            for (E node : clazz.getEnumConstants()) {
+                nodes.put(node, new GraphNode<>());
+            }
+
+            for (E node : clazz.getEnumConstants()) {
+                for (var arc : getArcs.apply(node)) {
+                    var from = nodes.get(node);
+                    var length = arc.getElement1();
+                    var dest = nodes.get(arc.getElement2());
+                    from.getOutgoingArcs().add(new GraphArc<>(length, dest));
+                }
+            }
+
+            return new Graph<>(new ArrayList<>(nodes.values()));
+        }
+
+        public static <T> Pair<Double, T> arc(double length, T dest) {
+            return new Pair<>(length, dest);
+        }
     }
 }
