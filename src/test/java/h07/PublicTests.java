@@ -274,7 +274,7 @@ public class PublicTests {
     class AdjacencyMatrixTest {
 
         @Test
-        void testConstructor() {
+        void testConstructorAndGetMatrix() {
             var matrix = new AdjacencyMatrix<>(graph);
             Object[][] actual = matrix.getMatrix();
             assertArrayEquals(adjacencyMatrix, actual);
@@ -366,6 +366,36 @@ public class PublicTests {
         @Override
         protected NodePointer<Integer, Integer> getNodeD() {
             return Node.D.nodePointer();
+        }
+    }
+
+    @Nested
+    class GraphTest {
+
+        @Test
+        void testConstructorAndGetNodes() {
+            var actual = new Graph<>(new AdjacencyMatrix<>(adjacencyMatrix));
+            assertNodesAndArcsMatch(graph.getNodes(), actual.getNodes());
+        }
+
+        private void assertNodesAndArcsMatch(List<GraphNode<Integer>> expected, List<GraphNode<Integer>> actual) {
+            assertEquals(expected.size(), actual.size());
+
+            for (int i = 0; i < expected.size(); i++) {
+                assertArcsMatch(
+                    expected.get(i).getOutgoingArcs(),
+                    actual.get(i).getOutgoingArcs());
+            }
+        }
+
+        private void assertArcsMatch(List<GraphArc<Integer>> expected, List<GraphArc<Integer>> actual) {
+            assertEquals(expected.size(), actual.size());
+
+            for (int i = 0; i < expected.size(); i++) {
+                assertEquals(
+                    expected.get(i).getLength(),
+                    actual.get(i).getLength());
+            }
         }
     }
 
