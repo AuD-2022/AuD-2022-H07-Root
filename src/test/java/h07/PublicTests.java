@@ -14,6 +14,37 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class PublicTests {
 
+    private enum Node { A, B, C, D, E, F }
+
+    private final Graph<Integer> graph = MockGraph.graph(Node.class, node ->
+        switch (node) {
+            case A -> List.of(
+                MockGraph.arc(2, Node.B),
+                MockGraph.arc(5, Node.D));
+            case B -> List.of(
+                MockGraph.arc(1, Node.A),
+                MockGraph.arc(4, Node.F));
+            case C -> List.of(
+                MockGraph.arc(3, Node.B));
+            case D -> List.of(
+                MockGraph.arc(8, Node.C));
+            case E -> List.of();
+            case F -> List.of(
+                MockGraph.arc(6, Node.D),
+                MockGraph.arc(7, Node.E));
+        }
+    );
+
+    private final Integer[][] adjacencyMatrix = {
+        //         A     B     C     D     E     F
+        /* A */ { null,    2, null,    5, null, null },
+        /* B */ {    1, null, null, null, null,    4 },
+        /* C */ { null,    3, null, null, null, null },
+        /* D */ { null, null,    8, null, null, null },
+        /* E */ { null, null, null, null, null, null },
+        /* F */ { null, null, null,    6,    7, null }
+    };
+
     public abstract static class IPriorityQueueTest<Q extends IPriorityQueue<Integer>> {
 
         protected static final Comparator<Integer> CMP = Integer::compare;
@@ -169,13 +200,13 @@ public class PublicTests {
 
         protected abstract Q newEmptyQueue();
 
-        protected void assertQueue(Iterable<Object> expected, Q actual) {
+        protected void assertQueue(Iterable<Integer> expected, Q actual) {
             assertIterableEquals(
                 expected,
                 queueToIterable(actual));
         }
 
-        protected abstract Iterable<Object> queueToIterable(Q queue);
+        protected abstract Iterable<Integer> queueToIterable(Q queue);
     }
 
     @Nested
@@ -187,7 +218,7 @@ public class PublicTests {
         }
 
         @Override
-        protected Iterable<Object> queueToIterable(PriorityQueueList<Integer> queue) {
+        protected Iterable<Integer> queueToIterable(PriorityQueueList<Integer> queue) {
             return new ArrayList<>(queue.getInternalList());
         }
     }
@@ -201,13 +232,13 @@ public class PublicTests {
         }
 
         @Override
-        protected Iterable<Object> queueToIterable(PriorityQueueHeap<Integer> queue) {
+        protected Iterable<Integer> queueToIterable(PriorityQueueHeap<Integer> queue) {
             return () ->
                 new HeapIterator<>(queue);
         }
     }
 
-    private static class HeapIterator<T> implements Iterator<Object> {
+    private static class HeapIterator<T> implements Iterator<T> {
 
         private final PriorityQueueHeap<T> heap;
 
@@ -232,42 +263,11 @@ public class PublicTests {
     @Nested
     class AdjacencyMatrixTest {
 
-        private enum Node { A, B, C, D, E, F }
-
-        private final Graph<Object> graph = MockGraph.graph(Node.class, node ->
-            switch (node) {
-                case A -> List.of(
-                    MockGraph.arc(2, Node.B),
-                    MockGraph.arc(5, Node.D));
-                case B -> List.of(
-                    MockGraph.arc(1, Node.A),
-                    MockGraph.arc(4, Node.F));
-                case C -> List.of(
-                    MockGraph.arc(3, Node.B));
-                case D -> List.of(
-                    MockGraph.arc(8, Node.C));
-                case E -> List.of();
-                case F -> List.of(
-                    MockGraph.arc(6, Node.D),
-                    MockGraph.arc(7, Node.E));
-            }
-        );
-
-        private final Integer[][] expected = {
-            //         A     B     C     D     E     F
-            /* A */ { null,    2, null,    5, null, null },
-            /* B */ {    1, null, null, null, null,    4 },
-            /* C */ { null,    3, null, null, null, null },
-            /* D */ { null, null,    8, null, null, null },
-            /* E */ { null, null, null, null, null, null },
-            /* F */ { null, null, null,    6,    7, null }
-        };
-
         @Test
         void testConstructor() {
             var matrix = new AdjacencyMatrix<>(graph);
-            var actual = matrix.getMatrix();
-            assertArrayEquals(expected, actual);
+            Object[][] actual = matrix.getMatrix();
+            assertArrayEquals(adjacencyMatrix, actual);
         }
     }
 
@@ -317,8 +317,8 @@ public class PublicTests {
 
     private static class MockGraph {
 
-        public static <E extends Enum<E>> Graph<Object> graph(Class<E> clazz, Function<E, List<Pair<Integer, E>>> getArcs) {
-            Map<E, GraphNode<Object>> nodes = new EnumMap<>(clazz);
+        public static <E extends Enum<E>> Graph<Integer> graph(Class<E> clazz, Function<E, List<Pair<Integer, E>>> getArcs) {
+            Map<E, GraphNode<Integer>> nodes = new EnumMap<>(clazz);
 
             for (E node : clazz.getEnumConstants()) {
                 nodes.put(node, new GraphNode<>());
