@@ -272,6 +272,34 @@ public class PublicTests {
     }
 
     @Nested
+    class ArcPointerAdjacencyMatrixTest {
+
+        private final AdjacencyMatrix<Integer> matrix = new AdjacencyMatrix<>(adjacencyMatrix);
+
+        private final ArcPointerAdjacencyMatrix<Integer, Integer> pointer = new ArcPointerAdjacencyMatrix<>(
+            new HashMap<>(),
+            new HashMap<>(),
+            matrix,
+            3, 2);
+
+        @Test
+        void testGetLength() {
+            assertEquals(8, pointer.getLength());
+        }
+
+        @Test
+        void testGetDestination() {
+            var dest = pointer.destination();
+            assertNull(dest.getPredecessor());
+
+            var arcs = dest.outgoingArcs();
+
+            assertEquals(3, arcs.next().getLength());
+            assertFalse(arcs.hasNext());
+        }
+    }
+
+    @Nested
     class DijkstraTest {
 
         private static final Comparator<Integer> CMP = (a, b) ->
