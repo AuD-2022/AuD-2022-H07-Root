@@ -274,19 +274,19 @@ public class PublicTests {
     @Nested
     class ArcPointerAdjacencyMatrixTest {
 
-        private final ArcPointerAdjacencyMatrix<Integer, Integer> arcFromCtoB = new ArcPointerAdjacencyMatrix<>(
+        private final ArcPointerAdjacencyMatrix<Integer, Integer> arcFromDtoC = new ArcPointerAdjacencyMatrix<>(
             new HashMap<>(),
             new HashMap<>(),
             new AdjacencyMatrix<>(adjacencyMatrix),
-            3, 2);
+            Node.D.ordinal(), Node.C.ordinal());
 
         @Test
         void testConstructorAndGetters() {
-            assertArcFromCToB(arcFromCtoB);
+            assertArcFromDToC(arcFromDtoC);
         }
     }
 
-    private static void assertArcFromCToB(ArcPointer<Integer, Integer> arc) {
+    private static void assertArcFromDToC(ArcPointer<Integer, Integer> arc) {
         assertEquals(8, arc.getLength());
 
         var dest = arc.destination();
@@ -301,16 +301,16 @@ public class PublicTests {
     @Nested
     class NodePointerAdjacencyMatrixTest {
 
-        private final NodePointerAdjacencyMatrix<Integer, Integer> nodeC = new NodePointerAdjacencyMatrix<>(
+        private final NodePointerAdjacencyMatrix<Integer, Integer> nodeD = new NodePointerAdjacencyMatrix<>(
             new HashMap<>(),
             new HashMap<>(),
             new AdjacencyMatrix<>(adjacencyMatrix),
-            3);
+            Node.D.ordinal());
 
         @Test
         void testOutgoingArcs() {
-            var arcs = nodeC.outgoingArcs();
-            assertArcFromCToB(arcs.next());
+            var arcs = nodeD.outgoingArcs();
+            assertArcFromDToC(arcs.next());
             assertFalse(arcs.hasNext());
         }
     }
