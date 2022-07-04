@@ -274,12 +274,10 @@ public class PublicTests {
     @Nested
     class ArcPointerAdjacencyMatrixTest {
 
-        private final AdjacencyMatrix<Integer> matrix = new AdjacencyMatrix<>(adjacencyMatrix);
-
         private final ArcPointerAdjacencyMatrix<Integer, Integer> pointer = new ArcPointerAdjacencyMatrix<>(
             new HashMap<>(),
             new HashMap<>(),
-            matrix,
+            new AdjacencyMatrix<>(adjacencyMatrix),
             3, 2);
 
         @Test
@@ -289,12 +287,33 @@ public class PublicTests {
 
         @Test
         void testGetDestination() {
-            var dest = pointer.destination();
-            assertNull(dest.getPredecessor());
+            assertArc(pointer);
+        }
+    }
 
-            var arcs = dest.outgoingArcs();
+    private static void assertArc(ArcPointer<Integer, Integer> pointer) {
+        var dest = pointer.destination();
+        assertNull(dest.getPredecessor());
 
-            assertEquals(3, arcs.next().getLength());
+        var arcs = dest.outgoingArcs();
+
+        assertEquals(3, arcs.next().getLength());
+        assertFalse(arcs.hasNext());
+    }
+
+    @Nested
+    class NodePointerAdjacencyMatrixTest {
+
+        private final NodePointerAdjacencyMatrix<Integer, Integer>  pointer = new NodePointerAdjacencyMatrix<>(
+            new HashMap<>(),
+            new HashMap<>(),
+            new AdjacencyMatrix<>(adjacencyMatrix),
+            3);
+
+        @Test
+        void testOutgoingArcs() {
+            var arcs = pointer.outgoingArcs();
+            assertArc(arcs.next());
             assertFalse(arcs.hasNext());
         }
     }
