@@ -234,7 +234,7 @@ public class PublicTests {
 
         private enum Node { A, B, C, D, E, F }
 
-        private final Graph<Double> graph = MockGraph.graph(Node.class, node ->
+        private final Graph<Object> graph = MockGraph.graph(Node.class, node ->
             switch (node) {
                 case A -> List.of(
                     MockGraph.arc(2, Node.B),
@@ -253,23 +253,35 @@ public class PublicTests {
             }
         );
 
+        private final Integer[][] expected = {
+            //         A     B     C     D     E     F
+            /* A */ { null,    2, null,    5, null, null },
+            /* B */ {    1, null, null, null, null,    4 },
+            /* C */ { null,    3, null, null, null, null },
+            /* D */ { null, null,    8, null, null, null },
+            /* E */ { null, null, null, null, null, null },
+            /* F */ { null, null, null,    6,    7, null }
+        };
+
         @Test
         void testConstructor() {
-            System.out.println(graph);
+            var matrix = new AdjacencyMatrix<>(graph);
+            var actual = matrix.getMatrix();
+            assertArrayEquals(expected, actual);
         }
     }
 
     @Nested
     class DijkstraTest {
 
-        private static final Comparator<Double> CMP = (a, b) ->
-            Double.compare(b, a);
+        private static final Comparator<Integer> CMP = (a, b) ->
+            Integer.compare(b, a);
 
-        private final Dijkstra<Double, Double> dijkstra = new Dijkstra<>(CMP, Double::sum, PriorityQueueList::new);
+        private final Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, Integer::sum, PriorityQueueList::new);
 
         @Test
         void testInitialize() {
-            throw new RuntimeException("Impl me");
+            fail("Impl me");
             // dijkstra.initialize(Node.A.pointer());
         }
     }
@@ -305,8 +317,8 @@ public class PublicTests {
 
     private static class MockGraph {
 
-        public static <E extends Enum<E>> Graph<Double> graph(Class<E> clazz, Function<E, List<Pair<Double, E>>> getArcs) {
-            Map<E, GraphNode<Double>> nodes = new EnumMap<>(clazz);
+        public static <E extends Enum<E>> Graph<Object> graph(Class<E> clazz, Function<E, List<Pair<Integer, E>>> getArcs) {
+            Map<E, GraphNode<Object>> nodes = new EnumMap<>(clazz);
 
             for (E node : clazz.getEnumConstants()) {
                 nodes.put(node, new GraphNode<>());
@@ -324,7 +336,7 @@ public class PublicTests {
             return new Graph<>(new ArrayList<>(nodes.values()));
         }
 
-        public static <T> Pair<Double, T> arc(double length, T dest) {
+        public static <T> Pair<Integer, T> arc(int length, T dest) {
             return new Pair<>(length, dest);
         }
     }
