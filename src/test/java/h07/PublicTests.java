@@ -45,7 +45,7 @@ public class PublicTests {
         /* F */ { null, null, null,    6,    7, null }
     };
 
-    public abstract static class IPriorityQueueTest<Q extends IPriorityQueue<Integer>> {
+    public abstract static class AbstractPriorityQueueTest<Q extends IPriorityQueue<Integer>> {
 
         protected static final Comparator<Integer> CMP = Integer::compare;
 
@@ -198,19 +198,18 @@ public class PublicTests {
                 queue);
         }
 
-        protected abstract Q newEmptyQueue();
-
         protected void assertQueue(Iterable<Integer> expected, Q actual) {
             assertIterableEquals(
                 expected,
                 queueToIterable(actual));
         }
 
+        protected abstract Q newEmptyQueue();
         protected abstract Iterable<Integer> queueToIterable(Q queue);
     }
 
     @Nested
-    class PriorityQueueListTest extends IPriorityQueueTest<PriorityQueueList<Integer>> {
+    class PriorityQueueListTest extends AbstractPriorityQueueTest<PriorityQueueList<Integer>> {
 
         @Override
         protected PriorityQueueList<Integer> newEmptyQueue() {
@@ -224,7 +223,7 @@ public class PublicTests {
     }
 
     @Nested
-    class PriorityQueueHeapTest extends IPriorityQueueTest<PriorityQueueHeap<Integer>> {
+    class PriorityQueueHeapTest extends AbstractPriorityQueueTest<PriorityQueueHeap<Integer>> {
 
         @Override
         protected PriorityQueueHeap<Integer> newEmptyQueue() {
@@ -271,19 +270,28 @@ public class PublicTests {
         }
     }
 
-    @Nested
-    class ArcPointerAdjacencyMatrixTest {
-
-        private final ArcPointerAdjacencyMatrix<Integer, Integer> arcFromDtoC = new ArcPointerAdjacencyMatrix<>(
-            new HashMap<>(),
-            new HashMap<>(),
-            new AdjacencyMatrix<>(adjacencyMatrix),
-            Node.D.ordinal(), Node.C.ordinal());
+    public abstract static class AbstractArcPointerTest {
 
         @Test
         void testConstructorAndGetters() {
+            var arcFromDtoC = getArcFromCtoD();
             assertArcFromDToC(arcFromDtoC);
         }
+
+        protected abstract ArcPointer<Integer, Integer> getArcFromCtoD();
+    }
+
+    public abstract static class AbstractNodePointerTest {
+
+        @Test
+        void testOutgoingArcs() {
+            var nodeD = getNodeD();
+            var arcs = nodeD.outgoingArcs();
+            assertArcFromDToC(arcs.next());
+            assertFalse(arcs.hasNext());
+        }
+
+        protected abstract NodePointer<Integer, Integer> getNodeD();
     }
 
     private static void assertArcFromDToC(ArcPointer<Integer, Integer> arc) {
@@ -299,19 +307,62 @@ public class PublicTests {
     }
 
     @Nested
-    class NodePointerAdjacencyMatrixTest {
+    class ArcPointerAdjacencyMatrixTest extends AbstractArcPointerTest {
 
-        private final NodePointerAdjacencyMatrix<Integer, Integer> nodeD = new NodePointerAdjacencyMatrix<>(
-            new HashMap<>(),
-            new HashMap<>(),
-            new AdjacencyMatrix<>(adjacencyMatrix),
-            Node.D.ordinal());
+        @Override
+        protected ArcPointer<Integer, Integer> getArcFromCtoD() {
+            return new ArcPointerAdjacencyMatrix<>(
+                new HashMap<>(),
+                new HashMap<>(),
+                new AdjacencyMatrix<>(adjacencyMatrix),
+                Node.D.ordinal(), Node.C.ordinal());
+        }
+    }
 
-        @Test
-        void testOutgoingArcs() {
-            var arcs = nodeD.outgoingArcs();
-            assertArcFromDToC(arcs.next());
-            assertFalse(arcs.hasNext());
+    @Nested
+    class NodePointerAdjacencyMatrixTest extends AbstractNodePointerTest {
+
+        @Override
+        protected NodePointer<Integer, Integer> getNodeD() {
+            return new NodePointerAdjacencyMatrix<>(
+                new HashMap<>(),
+                new HashMap<>(),
+                new AdjacencyMatrix<>(adjacencyMatrix),
+                Node.D.ordinal());
+        }
+    }
+
+    @Nested
+    class ArcPointerGraphTest extends AbstractArcPointerTest {
+
+        @Override
+        protected ArcPointer<Integer, Integer> getArcFromCtoD() {
+            var arc = graph
+                .getNodes()
+                .get(Node.D.ordinal())
+                .getOutgoingArcs()
+                .get(0);
+
+            return new ArcPointerGraph<>(
+                new HashMap<>(),
+                new HashMap<>(),
+                arc);
+        }
+    }
+
+    @Nested
+    class NodePointerGraphTest extends AbstractNodePointerTest {
+
+        @Override
+        protected NodePointer<Integer, Integer> getNodeD() {
+            var node = graph
+                .getNodes()
+                .get(Node.D.ordinal());
+
+            return new NodePointerGraph<>(
+                new HashMap<>(),
+                new HashMap<>(),
+                node);
         }
     }
 
