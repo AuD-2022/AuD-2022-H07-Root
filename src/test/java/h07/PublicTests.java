@@ -14,9 +14,22 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class PublicTests {
 
-    private enum Node { A, B, C, D, E, F }
+    private enum Node {
+        A, B, C, D, E, F;
 
-    private final Graph<Integer> graph = MockGraph.graph(Node.class, node ->
+        public GraphNode<Integer> graphNode() {
+            return graph.getNodes().get(ordinal());
+        }
+
+        public NodePointer<Integer, Integer> nodePointer() {
+            return new NodePointerGraph<>(
+                new HashMap<>(),
+                new HashMap<>(),
+                graphNode());
+        }
+    }
+
+    private static final Graph<Integer> graph = MockGraph.graph(Node.class, node ->
         switch (node) {
             case A -> List.of(
                 MockGraph.arc(2, Node.B),
@@ -337,9 +350,8 @@ public class PublicTests {
 
         @Override
         protected ArcPointer<Integer, Integer> getArcFromCtoD() {
-            var arc = graph
-                .getNodes()
-                .get(Node.D.ordinal())
+            var arc =
+                Node.D.graphNode()
                 .getOutgoingArcs()
                 .get(0);
 
@@ -355,14 +367,7 @@ public class PublicTests {
 
         @Override
         protected NodePointer<Integer, Integer> getNodeD() {
-            var node = graph
-                .getNodes()
-                .get(Node.D.ordinal());
-
-            return new NodePointerGraph<>(
-                new HashMap<>(),
-                new HashMap<>(),
-                node);
+            return Node.D.nodePointer();
         }
     }
 
