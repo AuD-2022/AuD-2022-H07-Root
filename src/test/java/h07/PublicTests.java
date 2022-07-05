@@ -1,7 +1,5 @@
 package h07;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
@@ -379,40 +377,63 @@ public class PublicTests {
 
         private final Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, Integer::sum, PriorityQueueList::new);
 
+        private final NodePointer<Integer, Integer> startNode = Node.A.nodePointer();
+
         @Test
-        void testInitialize() {
-            fail("Impl me");
-            // dijkstra.initialize(Node.A.pointer());
-        }
-    }
+        void testInitializeAndRun() {
+            startNode.setDistance(0);
+            dijkstra.initialize(startNode);
 
-    private abstract static class AbstractNodePointer<L, D> implements NodePointer<L, D> {
-
-        private D distance;
-        private NodePointer<L, D> predecessor = null;
-
-        @Override
-        public D getDistance() {
-            return distance;
+            var nodes = dijkstra.run();
+            assertStartNode();
+            assertNodes(nodes, 5);
         }
 
-        @Override
-        public void setDistance(@NotNull D distance) {
-            this.distance = distance;
+        @Test
+        void testInitializeWithPredAndRun() {
+            startNode.setDistance(0);
+            dijkstra.initialize(startNode, node ->
+                Objects.equals(node.getDistance(), 6));
+
+            var nodes = dijkstra.run();
+            assertStartNode();
+            assertNodes(nodes, 3);
         }
 
-        @Override
-        public @Nullable NodePointer<L, D> getPredecessor() {
-            return predecessor;
+        private void assertNodes(List<NodePointer<Integer, Integer>> nodes, int maxNodes) {
+            assertEquals(maxNodes, nodes.size());
+            assertDistances(nodes, maxNodes);
+            assertPredecessors(nodes, maxNodes);
         }
 
-        @Override
-        public void setPredecessor(@NotNull NodePointer<L, D> predecessor) {
-            this.predecessor = predecessor;
+        private void assertPredecessors(List<NodePointer<Integer, Integer>> nodes, int maxNodes) {
+            var predecessors = new NodePointer[]{
+                startNode,
+                startNode,
+                nodes.get(0),
+                nodes.get(1),
+                nodes.get(2),
+            };
+            Objects.checkIndex(maxNodes, predecessors.length+1);
+
+            for (int i = 0; i < maxNodes; i++) {
+                assertEquals(predecessors[i], nodes.get(i).getPredecessor());
+            }
         }
 
-        @Override
-        public abstract Iterator<ArcPointer<L, D>> outgoingArcs();
+        private void assertDistances(List<NodePointer<Integer, Integer>> nodes, int maxNodes) {
+            int[] distances = {2, 5, 6, 13, 13};
+            Objects.checkIndex(maxNodes, distances.length+1);
+
+            for (int i = 0; i < maxNodes; i++) {
+                assertEquals(distances[i], nodes.get(i).getDistance());
+            }
+        }
+
+        private void assertStartNode() {
+            assertEquals(0, startNode.getDistance());
+            assertNull(startNode.getPredecessor());
+        }
     }
 
     private static class MockGraph {
