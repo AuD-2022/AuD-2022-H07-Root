@@ -48,7 +48,7 @@ public class Point2DCollectionTest {
 
         Point2DCollection collection = new Point2DCollection(POINTS_COUNT, from, to, MAX_ARC_LENGTH_POINT);
 
-        assertEqualsTutor(MAX_ARC_LENGTH_POINT, getMaxArcLength(collection), () ->
+        assertEqualsTutor((double) MAX_ARC_LENGTH_POINT, getMaxArcLength(collection), () ->
             new AssertionMessage("the attribute [[[maxArcLength]]] does not have the correct value",
                 List.of(CONSTRUCTOR_DESCRIPTION))
         );
