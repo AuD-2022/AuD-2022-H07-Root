@@ -538,6 +538,43 @@ public class PublicTests {
         }
     }
 
+    @Nested
+    class NodePointerPoint2DTest {
+
+        private final Point2DCollection point2DCollection = new Point2DCollection(getPoints(), 1);
+
+        private List<Point2D> getPoints() {
+            var points = new ArrayList<Point2D>();
+
+            for (int x = 0; x < 10; x++) {
+                for (int y = 0; y < 10; y++) {
+                    points.add(new Point2D(x, y));
+                }
+            }
+
+            return points;
+        }
+
+        private final NodePointerPoint2D pointer = new NodePointerPoint2D(
+            new HashMap<>(),
+            new HashMap<>(),
+            point2DCollection.getPoints().get(0),
+            point2DCollection);
+
+        @Test
+        void testConstructorAndOutgoingArcs() {
+            var arcs = pointer.outgoingArcs();
+
+            var arc = arcs.next();
+            assertEquals(1, arc.getLength());
+
+            arc = arcs.next();
+            assertEquals(1, arc.getLength());
+
+            assertFalse(arcs.hasNext());
+        }
+    }
+
     private static class MockGraph {
 
         public static <E extends Enum<E>> Graph<Integer> graph(Class<E> clazz, Function<E, List<Pair<Integer, E>>> getArcs) {
