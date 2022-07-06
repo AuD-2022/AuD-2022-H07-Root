@@ -514,6 +514,30 @@ public class PublicTests {
         }
     }
 
+    @Nested
+    class Point2DCollectionTest {
+
+        void testConstructorAndGetPoints() {
+            var point2DCollection = new Point2DCollection(
+                20,
+                new Point2D(-5, -5),
+                new Point2D(5, 5),
+                1);
+
+            assertEquals(1, point2DCollection.getMaxArcLength());
+
+            var points = point2DCollection.getPoints();
+            assertEquals(20, points.size());
+
+            for (var point : points) {
+                assertTrue(point.getX() >= -5);
+                assertTrue(point.getX() <=  5);
+                assertTrue(point.getY() >= -5);
+                assertTrue(point.getY() <=  5);
+            }
+        }
+    }
+
     private static class MockGraph {
 
         public static <E extends Enum<E>> Graph<Integer> graph(Class<E> clazz, Function<E, List<Pair<Integer, E>>> getArcs) {
