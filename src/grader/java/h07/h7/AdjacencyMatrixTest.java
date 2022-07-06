@@ -6,12 +6,15 @@ import h07.IllegalMethodsCheck;
 import h07.implementation.GraphAdjacencyMatrixConverter;
 import h07.provider.GraphProvider;
 import h07.transformer.MethodInterceptor;
+import kotlin.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.sourcegrade.jagr.api.rubric.TestForSubmission;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static h07.Assertions.*;
@@ -39,6 +42,13 @@ public class AdjacencyMatrixTest {
         Object[][] actualMatrix = new AdjacencyMatrix<>(graph).getMatrix();
         assertAdjacencyMatrixEquals(expectedMatrix, actualMatrix, () ->
             new AssertionMessage("the [[[adjacencyMatrix]]] returned by [[[AdjacencyMatrix(Graph)]]] is not correct", List.of()));
+    }
+
+    @Test
+    public void testConstructorEmpty() {
+        assertAdjacencyMatrixEquals(new Integer[0][0], new AdjacencyMatrix<Integer>(new Graph<>(new ArrayList<>())).getMatrix(), () ->
+            new AssertionMessage("the [[[adjacencyMatrix]]] returned by [[[AdjacencyMatrix(Graph)]]] is not correct",
+                List.of(new Pair<>("Argument #1 - [[[graph]]]", "an empty graph"))));
     }
 
 }

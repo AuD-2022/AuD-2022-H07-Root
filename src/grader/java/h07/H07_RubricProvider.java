@@ -174,8 +174,14 @@ public class H07_RubricProvider implements RubricProvider {
             .pointsPassedMax().build())
         .build();
 
-    private static final Criterion H6_3 = DEFAULT_CRITERION.apply("Der Konstruktor Graph(AdjacencyMatrix<L>) ist vollständig korrekt implementiert.",
-        () -> GraphTest.class.getDeclaredMethod("testConstructor", AdjacencyMatrix.class));
+    private static final Criterion H6_3 = Criterion.builder()
+        .shortDescription("Der Konstruktor Graph(AdjacencyMatrix<L>) ist vollständig korrekt implementiert.")
+        .grader(Grader.testAwareBuilder()
+            .requirePass(JUnitTestRef.ofMethod(() -> GraphTest.class.getDeclaredMethod("testConstructor", AdjacencyMatrix.class)))
+            .requirePass(JUnitTestRef.ofMethod(() -> GraphTest.class.getDeclaredMethod("testConstructorEmpty")))
+            .pointsFailedMin()
+            .pointsPassedMax().build())
+        .build();
 
     private static final Criterion H6 = Criterion.builder()
         .shortDescription("H6 | Graph")
@@ -203,8 +209,14 @@ public class H07_RubricProvider implements RubricProvider {
             .pointsPassedMax().build())
         .build();
 
-    private static final Criterion H7_3 = DEFAULT_CRITERION.apply("Der Konstruktor AdjacencyMatrix(Graph<L>) ist vollständig korrekt implementiert.",
-        () -> AdjacencyMatrixTest.class.getDeclaredMethod("testConstructor", Graph.class));
+    private static final Criterion H7_3 =Criterion.builder()
+        .shortDescription("Der Konstruktor AdjacencyMatrix(Graph<L>) ist vollständig korrekt implementiert.")
+        .grader(Grader.testAwareBuilder()
+            .requirePass(JUnitTestRef.ofMethod(() -> AdjacencyMatrixTest.class.getDeclaredMethod("testConstructor", Graph.class)))
+            .requirePass(JUnitTestRef.ofMethod(() -> AdjacencyMatrixTest.class.getDeclaredMethod("testConstructorEmpty")))
+            .pointsFailedMin()
+            .pointsPassedMax().build())
+        .build();
 
     private static final Criterion H7 = Criterion.builder()
         .shortDescription("H7 | Graph als Adjazenzmatrix")
