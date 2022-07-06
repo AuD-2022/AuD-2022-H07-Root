@@ -541,9 +541,9 @@ public class PublicTests {
     @Nested
     class NodePointerPoint2DTest {
 
-        private final Point2DCollection point2DCollection = new Point2DCollection(getPoints(), 1);
+        private static final Point2DCollection point2DCollection = new Point2DCollection(getPoints(), 1);
 
-        private List<Point2D> getPoints() {
+        private static List<Point2D> getPoints() {
             var points = new ArrayList<Point2D>();
 
             for (int x = 0; x < 10; x++) {
@@ -565,11 +565,39 @@ public class PublicTests {
         void testConstructorAndOutgoingArcs() {
             var arcs = pointer.outgoingArcs();
 
-            var arc = arcs.next();
-            assertEquals(1, arc.getLength());
+            ArcPointerPoint2DTest.assertArcs(arcs, 2);
+        }
+    }
 
-            arc = arcs.next();
-            assertEquals(1, arc.getLength());
+    @Nested
+    class ArcPointerPoint2DTest {
+
+        private final ArcPointerPoint2D pointer = new ArcPointerPoint2D(
+            new HashMap<>(),
+            new HashMap<>(),
+            NodePointerPoint2DTest.point2DCollection.getPoints().get(0),
+            NodePointerPoint2DTest.point2DCollection.getPoints().get(1),
+            NodePointerPoint2DTest.point2DCollection);
+
+        @Test
+        void testConstructorAndGetLength() {
+            assertEquals(1, pointer.getLength());
+        }
+
+        @Test
+        void testDestination() {
+            var dest = pointer.destination();
+
+            var arcs = dest.outgoingArcs();
+
+            assertArcs(arcs, 3);
+        }
+
+        private static void assertArcs(Iterator<ArcPointer<Double, Double>> arcs, int numberOfArcs) {
+            for (int i = 0; i < numberOfArcs; i++) {
+                var arc = arcs.next();
+                assertEquals(1, arc.getLength());
+            }
 
             assertFalse(arcs.hasNext());
         }
