@@ -24,6 +24,13 @@ import static h07.Assertions.*;
 @TestForSubmission("h07")
 public class NodePointerPoint2DTest extends Point2DPointerTest{
 
+    private static final kotlin.Pair<String, String> CONSTRUCTOR_DESCRIPTION =
+        new kotlin.Pair<>("[[[this]]]", "[[[new NodePointerPoint2D(existingNodePointers, existingArcPointers, point, collection)]]]");
+
+    private static final kotlin.Pair<String, String> MAP_DESCRIPTION =
+        new kotlin.Pair<>("[[[existingArcPointersMap]]] and [[[existingNodePointersMap]]]",
+            "the fields and the methods [[[getLength()]]], [[[destination()]]] and [[[outgoingArcs()]]] of the values of the maps have been overwritten to return the expected values");
+
     @BeforeEach
     public void reset() {
         MethodInterceptor.reset();
@@ -50,11 +57,14 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         NodePointerPoint2D actualNodePointer = new NodePointerPoint2D(existingNodePointers,
             existingArcPointers, pointToAdd, collection);
 
-        assertTrue(getExistingNodePointersMap(actualNodePointer).containsKey(pointToAdd) &&
+        assertTrueTutor(getExistingNodePointersMap(actualNodePointer).containsKey(pointToAdd) &&
                 getExistingNodePointersMap(actualNodePointer).get(pointToAdd).equals(actualNodePointer),
-            "the created nodePointer wasn't added to the existingArcPointersMap");
+            () -> new AssertionMessage("the created [[[nodePointer]]] wasn't added to the [[[existingNodePointersMap]]] after invoking the constructor",
+                List.of(CONSTRUCTOR_DESCRIPTION)));
 
-        assertNodePointerPoint2DEquals(existingNodePointers, existingArcPointers, pointToAdd, collection, null, null, actualNodePointer);
+        assertNodePointerPoint2DEquals(existingNodePointers, existingArcPointers, pointToAdd, collection, null, null, actualNodePointer,
+            () -> new AssertionMessage("the [[[nodePointer]]] created by the constructor does not have the expected properties",
+                List.of(CONSTRUCTOR_DESCRIPTION)));
     }
 
     @ParameterizedTest
@@ -67,7 +77,10 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         double distance = RANDOM.nextDouble(0, MAX_ARC_LENGTH_POINT);
 
         newNodePointer.setDistance(distance);
-        assertEquals(distance, newNodePointer.getDistance(), "the methode getDistance() did not return the correct value");
+        assertEqualsTutor(distance, newNodePointer.getDistance(), () -> new AssertionMessage("[[[getDistance()]]] did not return the correct value",
+            List.of(CONSTRUCTOR_DESCRIPTION,
+                new kotlin.Pair<>("[[[distance]]]", "The [[[distance]]] of the [[[nodePointer]]] has been set using [[[setDistance(%f)]]]".formatted(distance))))
+        );
     }
 
     @ParameterizedTest
@@ -80,7 +93,10 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         NodePointerPoint2D destination = new NodePointerPoint2D(existingNodePointers, existingArcPointers, new Point2D(1,1), collection);
 
         destination.setPredecessor(predecessor);
-        assertEquals(predecessor, destination.getPredecessor(), "the methode getPredecessor() did not return the correct value");
+        assertEqualsTutor(predecessor, destination.getPredecessor(),() -> new AssertionMessage("[[[getPredecessor()]]] did not return the correct value",
+            List.of(CONSTRUCTOR_DESCRIPTION,
+                new kotlin.Pair<>("[[[predecessor]]]", "The [[[predecessor]]] of the [[[nodePointer]]] has been set using [[[setPredecessor(%s)]]]".formatted(predecessor))))
+        );
     }
 
     @ParameterizedTest
@@ -102,22 +118,35 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         List<ArcPointerPoint2D> actualOutgoingArcs = arcPointerListToArcPointerPoint2DList(iteratorToList(node.outgoingArcs()));
 
         //create a message with more information about why the test failed
-        String extendedMessage = "";
-        if (expectedOutgoingArcs.size() == actualOutgoingArcs.size() - 1) {
-            List<ArcPointerPoint2D> actualOutgoingArcsCopy = new ArrayList<>(actualOutgoingArcs);
-            actualOutgoingArcsCopy.removeAll(expectedOutgoingArcs);
-            if (actualOutgoingArcsCopy.size() == 1 && getDestination(actualOutgoingArcsCopy.get(0)) == point) {
-                extendedMessage = ". An arc to the node itself was returned";
-            }
-        }
+        String extendedMessage = createExtendedMessage(expectedOutgoingArcs, actualOutgoingArcs, point);
 
-        assertEquals(expectedOutgoingArcs.size(), actualOutgoingArcs.size(), "the method outgoingArcs() did not return the correct amount of arcs if the existingArcPointersMap contains all arcs" + extendedMessage);
-        assertListContainsAllWithPredicate(expectedOutgoingArcs, actualOutgoingArcs, (ArcPointerPoint2D expected, ArcPointerPoint2D actual) -> expected == actual, "the method outgoingArcs() did not return the correct elements if the existingArcPointersMap contains all arcs");
+        assertEqualsTutor(expectedOutgoingArcs.size(), actualOutgoingArcs.size(), () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct amount of arcs",
+            List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
+                new kotlin.Pair<>("[[[point]]]", "a [[[Point]]] whose outgoing arcs are keys of the [[[existingArcPointers]]] map")))
+        );
+
+        assertListContainsAllWithPredicate(expectedOutgoingArcs, actualOutgoingArcs, (ArcPointerPoint2D expected, ArcPointerPoint2D actual) -> expected == actual,
+            "the list returned by [[[outgoingArcs()]]]",
+            () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct arcs" + extendedMessage,
+                List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
+                    new kotlin.Pair<>("[[[point]]]", "a [[[Point]]] whose outgoing arcs are keys of the [[[existingArcPointers]]] map")))
+        );
 
         //existingArcsMap does not contain the arcs
         for (ArcPointerPoint2D outgoingArc : expectedOutgoingArcs) existingArcPointers.remove(new Pair<>(getSource(outgoingArc), getDestination(outgoingArc)));
 
         node = new NodePointerPoint2D(existingNodePointers, existingArcPointers, point, collection);
+        actualOutgoingArcs = arcPointerListToArcPointerPoint2DList(iteratorToList(node.outgoingArcs()));
+
+        //create a message with more information about why the test failed
+        String extendedMessage2 = createExtendedMessage(expectedOutgoingArcs, actualOutgoingArcs, point);
+
+
+        assertEqualsTutor(expectedOutgoingArcs.size(), actualOutgoingArcs.size(),
+            () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct amount of arcs",
+                List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
+                    new kotlin.Pair<>("[[[point]]]", "a [[[Point]]] whose outgoing arcs are not keys of the [[[existingArcPointers]]] map")))
+        );
 
         assertListContainsAllWithPredicate(expectedOutgoingArcs, actualOutgoingArcs, (ArcPointerPoint2D expected, ArcPointerPoint2D actual) -> {
             try {
@@ -130,14 +159,31 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
                 fail("could not read fields of class ArcPointerPoint2D"); //shouldn't happen
                 return false;
             }
-        }, "the method outgoingArcs() did not return the correct elements if the existingArcPointersMap does not contains all arcs");
+        }, "the list returned by [[[outgoingArcs()]]]",
+            () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct arcs" + extendedMessage2,
+                List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
+                    new kotlin.Pair<>("[[[point]]]", "a [[[Point]]] whose outgoing arcs are not keys of the [[[existingArcPointers]]] map")))
+        );
+    }
+
+    private static String createExtendedMessage(List<ArcPointerPoint2D> expectedOutgoingArcs, List<ArcPointerPoint2D> actualOutgoingArcs, Point2D point) throws NoSuchFieldException, IllegalAccessException {
+        String extendedMessage = "";
+        if (expectedOutgoingArcs.size() == actualOutgoingArcs.size() - 1) {
+            List<ArcPointerPoint2D> actualOutgoingArcsCopy = new ArrayList<>(actualOutgoingArcs);
+            actualOutgoingArcsCopy.removeAll(expectedOutgoingArcs);
+            if (actualOutgoingArcsCopy.size() == 1 && getDestination(actualOutgoingArcsCopy.get(0)) == point) {
+                extendedMessage = ". An arc to the node itself was returned";
+            }
+        }
+
+        return extendedMessage;
     }
 
 
     private List<ArcPointerPoint2D> arcPointerListToArcPointerPoint2DList(List<ArcPointer<Double, Double>> outgoingArcs) {
         return outgoingArcs.stream()
             .map((ArcPointer<Double, Double> arcPointer) -> {
-                    assertInstanceOf(ArcPointerPoint2D.class, arcPointer, "the elements returned by the the outgoingArcs() method did not have the correct dynamic type");
+                    assertInstanceOf(ArcPointerPoint2D.class, arcPointer, "the elements returned by [[[outgoingArcs()]]] did not have the correct dynamic type");
                     return ((ArcPointerPoint2D) arcPointer);
                 }
             ).collect(Collectors.toList());

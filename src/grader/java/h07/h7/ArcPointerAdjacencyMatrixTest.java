@@ -9,17 +9,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.sourcegrade.jagr.api.rubric.TestForSubmission;
 
-import static h07.Assertions.assertArcPointerAdjacencyMatrixEquals;
-import static h07.Assertions.assertNodePointerAdjacencyMatrixEquals;
+import static h07.Assertions.*;
 import static h07.TestConstants.MAX_NODE_DISTANCE;
 import static h07.TestConstants.RANDOM;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 @TestForSubmission("h07")
 public class ArcPointerAdjacencyMatrixTest extends AdjacencyMatrixPointerTest {
+
+    private static final kotlin.Pair<String, String> CONSTRUCTOR_DESCRIPTION =
+        new kotlin.Pair<>("[[[this]]]", "[[[new ArcPointerAdjacencyMatrix(existingNodePointers, existingArcPointers, row, column)]]]");
+
+    private static final kotlin.Pair<String, String> MAP_DESCRIPTION =
+        new kotlin.Pair<>("[[[existingArcPointersMap]]] and [[[existingNodePointersMap]]]",
+            "the fields and the methods [[[getLength()]]], [[[destination()]]] and [[[outgoingArcs()]]] of the values of the maps have been overwritten to return the expected values");
 
     @BeforeEach
     public void reset() {
@@ -43,12 +50,15 @@ public class ArcPointerAdjacencyMatrixTest extends AdjacencyMatrixPointerTest {
         ArcPointerAdjacencyMatrix<Integer, Integer> actualArcPointer = new ArcPointerAdjacencyMatrix<>(existingNodePointers,
             existingArcPointers, adjacencyMatrix, arcToAdd.getElement1(), arcToAdd.getElement2());
 
-        assertTrue(getExistingArcPointersMap(actualArcPointer).containsKey(arcToAdd) &&
+        assertTrueTutor(getExistingArcPointersMap(actualArcPointer).containsKey(arcToAdd) &&
                 getExistingArcPointersMap(actualArcPointer).get(arcToAdd).equals(actualArcPointer),
-            "the created arcPointer wasn't added to the existingArcPointersMap");
+            () -> new AssertionMessage("the created [[[arcPointer]]] wasn't added to the [[[existingArcPointersMap]]] after invoking the constructor",
+                List.of(CONSTRUCTOR_DESCRIPTION)));
 
         assertArcPointerAdjacencyMatrixEquals(adjacencyMatrix, existingNodePointers, existingArcPointers,
-            arcToAdd.getElement1(), arcToAdd.getElement2(), actualArcPointer);
+            arcToAdd.getElement1(), arcToAdd.getElement2(), actualArcPointer,
+            () -> new AssertionMessage("the [[[arcPointer]]] created by the constructor does not have the expected properties",
+                List.of(CONSTRUCTOR_DESCRIPTION)));
     }
 
     @ParameterizedTest
@@ -64,11 +74,17 @@ public class ArcPointerAdjacencyMatrixTest extends AdjacencyMatrixPointerTest {
 
         ArcPointerAdjacencyMatrix<Integer, Integer> newArcPointer = new ArcPointerAdjacencyMatrix<>(existingNodePointers, existingArcPointers, adjacencyMatrix, row, column);
 
-        assertEquals(length, newArcPointer.getLength(), "the method getLength() did not return the correct value.");
+        assertEqualsTutor(length, newArcPointer.getLength(), () -> new AssertionMessage("[[[getLength()]]] did not return the correct value",
+            List.of(CONSTRUCTOR_DESCRIPTION, new kotlin.Pair<>("[[[row, column]]]", "the indices of a arc with [[[matrix[row][column] == %d]]]".formatted(length)))
+        ));
 
         //test no connection
         adjacencyMatrix.getMatrix()[row][column] = null;
-        assertNull(newArcPointer.getLength(), "the method getLength() did not return the correct value if there is no connection between two nodes");
+
+        assertNullTutor(newArcPointer.getLength(), () -> new AssertionMessage(
+            "[[[getLength()]] did not return the correct value if there is no connection between two nodes",
+            List.of(CONSTRUCTOR_DESCRIPTION, new kotlin.Pair<>("[[[row, column]]]", "the indices of a arc with [[[matrix[row][column] == null]]]"))
+        ));
     }
 
     @ParameterizedTest
@@ -82,17 +98,31 @@ public class ArcPointerAdjacencyMatrixTest extends AdjacencyMatrixPointerTest {
         int destination = nodeIterator.next();
 
         //existingNodes contains destination node
-        NodePointer<Integer, Integer> actualNodePointer = new ArcPointerAdjacencyMatrix<>(existingNodePointers, existingArcPointers, adjacencyMatrix, start, destination).destination();
-        assertInstanceOf(NodePointerAdjacencyMatrix.class, actualNodePointer, "the NodePointer returned by the destination() method does not have the correct dynamic type if the existingNodePointers map contains the destination node");
-        assertSame(existingNodePointers.get(destination), actualNodePointer, "the methode destination() did not return the correct value if the existingNodePointers map contains the destination node.");
+        NodePointer<Integer, Integer> actualDestination = new ArcPointerAdjacencyMatrix<>(existingNodePointers, existingArcPointers, adjacencyMatrix, start, destination).destination();
+
+        assertInstanceOf(NodePointerAdjacencyMatrix.class, actualDestination,
+            "the [[[nodePointer]]] returned by [[[destination()]]] does not have the correct dynamic type if the [[[existingNodePointers]]] map contains the destination");
+
+        assertSameTutor(existingNodePointers.get(destination), actualDestination,
+            () -> new AssertionMessage("[[[destination()]]] did not return the correct [[[NodePointer]]]",
+                List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
+                    new kotlin.Pair<>("[[[row, column]]]", "the indices of a arc whose destination is a key of the [[[existingNodePointers]]] map")))
+        );
 
         //existingNodes does not contain destination node
         existingNodePointers.remove(destination);
 
-        actualNodePointer =new ArcPointerAdjacencyMatrix<>(existingNodePointers, existingArcPointers, adjacencyMatrix, start, destination).destination();
-        assertInstanceOf(NodePointerAdjacencyMatrix.class, actualNodePointer, "the NodePointer returned by the destination() method does not have the correct dynamic type if the existingNodePointers map does not contain the destination node");
+        actualDestination =new ArcPointerAdjacencyMatrix<>(existingNodePointers, existingArcPointers, adjacencyMatrix, start, destination).destination();
+
+        assertInstanceOf(NodePointerAdjacencyMatrix.class, actualDestination,
+            "the [[[nodePointer]]] returned by [[[destination()]]] does not have the correct dynamic type if the [[[existingNodePointers]]] map does not contain the destination");
+
         assertNodePointerAdjacencyMatrixEquals(existingNodePointers, existingArcPointers, adjacencyMatrix,
-            null, null, destination, (NodePointerAdjacencyMatrix<Integer, Integer>) actualNodePointer);
+            null, null, destination, (NodePointerAdjacencyMatrix<Integer, Integer>) actualDestination,
+            () -> new AssertionMessage("[[[destination()]]] did not return the correct [[[nodePointer]]]",
+                List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
+                    new kotlin.Pair<>("[[[row, column]]]", "the indices of a arc whose destination is not a key of the [[[existingNodePointers]]] map")))
+        );
     }
 
 }

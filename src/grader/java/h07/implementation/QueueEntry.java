@@ -9,10 +9,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class QueueEntry {
 
-    public static final Comparator<QueueEntry> QUEUE_ENTRY_CMP = Comparator.comparingInt((QueueEntry queueEntry) -> {
+    public static final Comparator<QueueEntry> QUEUE_ENTRY_CMP = Comparator.comparingInt(queueEntry -> {
         if (queueEntry == null) fail("a queueEntry that was passed to the comparator is null");
         return queueEntry.value % 10;
     });
+
     public static final QueueEntry UNUSED_ENTRY = new QueueEntry(MAX_QUEUE_ENTRY_VALUE + 1, -1);
     public static int nextID = 0;
 
@@ -44,7 +45,8 @@ public class QueueEntry {
     @Override
     public String toString() {
         return "QueueEntry{" +
-            "id=" + id +
+            "value=" + value +
+            ", id=" + id +
             '}';
     }
 

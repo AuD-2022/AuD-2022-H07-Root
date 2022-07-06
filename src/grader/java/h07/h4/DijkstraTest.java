@@ -10,6 +10,7 @@ import h07.implementation.NodePointerImpl;
 import h07.implementation.PriorityQueueImpl;
 import h07.provider.GraphToNodePointerImplProvider;
 import h07.transformer.MethodInterceptor;
+import kotlin.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,11 @@ import static h07.Assertions.*;
 @TestForSubmission("h07")
 public class DijkstraTest {
 
+    private static final String CONSTRUCTOR_DESCRIPTION = "[[[new Dijkstra(Comparator.reverseOrder(), " +
+        "(Integer a, Integer b) -> a == null ? b : a + b, " +
+        "cmp -> <reference implementation>(cmp)]]]";
+
+
     public static final Function<Comparator<NodePointer<Integer, Integer>>, IPriorityQueue<NodePointer<Integer, Integer>>> QUEUE_FACTORY = comparator -> {
         queueFactoryInvoked = true;
         queueFactoryInvokedWith = comparator;
@@ -39,10 +45,15 @@ public class DijkstraTest {
         return toReturn;
     };
 
-    public static final BiFunction<Integer, Integer, Integer> DISTANCE_FUNCTION = (Integer a, Integer b) -> a == null ? b : a + b;
+    public static final BiFunction<Integer, Integer, Integer> DISTANCE_FUNCTION = (Integer a, Integer b) -> {
+        if (a == null || b == null) failTutor(new AssertionMessage("a value passed to the distance function was null",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION))));
+        return a + b;
+    };
 
     public static final Comparator<Integer> NODE_CMP = (i1, i2) -> {
-        if (i1 == null || i2 == null) fail("a value passed to the comparator was null");
+        if (i1 == null || i2 == null) failTutor(new AssertionMessage("a value passed to the comparator was null",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION))));
         return Comparator.<Integer>reverseOrder().compare(i1, i2);
     };
 
@@ -90,6 +101,7 @@ public class DijkstraTest {
         getPriorityQueue(dijkstra).add(new NodePointerImpl());
         NodePointerImpl startNode = nodePointers.get(0);
         dijkstra.initialize(startNode);
+
         assertEquals(1, getPriorityQueue(dijkstra).queue.size(), "the priorityQueue does not contain the correct amount of items");
         assertTrue(getPriorityQueue(dijkstra).queue.contains(startNode), "the priorityQueue does not contain the startNode");
     }
@@ -113,16 +125,40 @@ public class DijkstraTest {
     public void testUnvisitedNode() throws NoSuchFieldException, IllegalAccessException {
         Dijkstra<Integer, Integer> dijkstra = createInstance();
 
-        NodePointerImpl startNode = new NodePointerImpl(5);
-        NodePointer<Integer, Integer> unvisitedNode = new NodePointerImpl();
-        startNode.addOutgoingArc(new ArcPointerImpl(10, unvisitedNode));
-        getPriorityQueue(dijkstra).add(startNode);
+        NodePointerImpl currentNode = new NodePointerImpl(5).setName("currentNode");
+        NodePointerImpl unvisitedNode = new NodePointerImpl().setName("unvisitedNode");
 
-        dijkstra.expandNode(startNode);
+        currentNode.addOutgoingArc(new ArcPointerImpl(10, unvisitedNode));
 
-        assertSame(startNode, unvisitedNode.getPredecessor(), "the attribute predecessor of the visited node does not have the correct value");
-        assertEquals(15, unvisitedNode.getDistance(), "the attribute distance of the visited node does not have the correct value");
-        assertTrue(getPriorityQueue(dijkstra).contains(unvisitedNode), "the visited node wasn't added to the queue");
+        //For assertion messages
+        NodePointerImpl originalCurrentNode = currentNode.clone();
+        NodePointerImpl originalUnvisitedNode = unvisitedNode.clone();
+
+
+        getPriorityQueue(dijkstra).add(currentNode);
+
+        dijkstra.expandNode(currentNode);
+
+        assertSameTutor(currentNode, unvisitedNode.getPredecessor(), () -> new AssertionMessage(
+            "the attribute predecessor of [[[unvisitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[currentNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[unvisitedNode]]]", originalUnvisitedNode.toString()))
+        ));
+
+        assertEqualsTutor(15, unvisitedNode.getDistance(), () -> new AssertionMessage(
+            "the attribute distance of [[[unvisitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[currentNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[unvisitedNode]]]", originalUnvisitedNode.toString()))
+        ));
+
+        assertTrueTutor(getPriorityQueue(dijkstra).contains(unvisitedNode), () -> new AssertionMessage(
+            "[[[unvisitedNode]]] wasn't added to the queue after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[currentNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[unvisitedNode]]]", originalUnvisitedNode.toString()))
+        ));
     }
 
     @Test
@@ -130,42 +166,86 @@ public class DijkstraTest {
         //test update distance
         Dijkstra<Integer, Integer> dijkstra = createInstance();
 
-        NodePointerImpl startNode = new NodePointerImpl(5);
-        NodePointer<Integer, Integer> visitedNode = new NodePointerImpl(20);
-        NodePointerImpl otherNode = new NodePointerImpl(15);
+        NodePointerImpl currentNode = new NodePointerImpl(5).setName("currentNode");
+        NodePointerImpl visitedNode = new NodePointerImpl(20).setName("visitedNode");
+        NodePointerImpl otherNode = new NodePointerImpl(15).setName("otherNode");
 
-        startNode.addOutgoingArc(new ArcPointerImpl(10, visitedNode));
+        currentNode.addOutgoingArc(new ArcPointerImpl(10, visitedNode));
         visitedNode.setPredecessor(otherNode);
         otherNode.addOutgoingArc(new ArcPointerImpl(5, visitedNode));
 
+        //For assertion messages
+        NodePointerImpl originalCurrentNode = currentNode.clone();
+        NodePointerImpl originalVisitedNode = visitedNode.clone();
+        NodePointerImpl originalOtherNode = otherNode.clone();
+
         getPriorityQueue(dijkstra).add(visitedNode);
-        getPriorityQueue(dijkstra).add(startNode);
 
-        dijkstra.expandNode(startNode);
+        dijkstra.expandNode(currentNode);
 
-        assertSame(startNode, visitedNode.getPredecessor(), "the attribute predecessor of the visited node does not have the correct value");
-        assertEquals(15, visitedNode.getDistance(), "the attribute distance of the visited node does not have the correct value");
-        assertTrue(getPriorityQueue(dijkstra).contains(visitedNode), "the queue does not contain the visited node");
+        assertSameTutor(currentNode, visitedNode.getPredecessor(), () -> new AssertionMessage(
+            "the attribute predecessor of [[[visitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+        ));
+
+        assertEqualsTutor(15, visitedNode.getDistance(), () -> new AssertionMessage(
+            "the attribute distance of [[[visitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+        ));
+
+        assertTrueTutor(getPriorityQueue(dijkstra).contains(visitedNode), () -> new AssertionMessage(
+            "the queue does not contain [[[visitedNode]]] after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+        ));
 
         //test do not update distance
         dijkstra = createInstance();
 
-        startNode = new NodePointerImpl(5);
+        currentNode = new NodePointerImpl(5);
         visitedNode = new NodePointerImpl(1);
         otherNode = new NodePointerImpl(0);
 
-        startNode.addOutgoingArc(new ArcPointerImpl(10, visitedNode));
+        currentNode.addOutgoingArc(new ArcPointerImpl(10, visitedNode));
         visitedNode.setPredecessor(otherNode);
         otherNode.addOutgoingArc(new ArcPointerImpl(1, visitedNode));
 
         getPriorityQueue(dijkstra).add(visitedNode);
-        getPriorityQueue(dijkstra).add(startNode);
+        getPriorityQueue(dijkstra).add(currentNode);
 
-        dijkstra.expandNode(startNode);
+        dijkstra.expandNode(currentNode);
 
-        assertSame(otherNode, visitedNode.getPredecessor(), "the attribute predecessor of the visited node does not have the correct value");
-        assertEquals(1, visitedNode.getDistance(), "the attribute distance of the visited node does not have the correct value");
-        assertTrue(getPriorityQueue(dijkstra).contains(visitedNode), "the queue does not contain the visited node");
+        assertSameTutor(otherNode, visitedNode.getPredecessor(), () -> new AssertionMessage(
+            "the attribute predecessor of [[[visitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+        ));
+
+        assertEqualsTutor(1, visitedNode.getDistance(), () -> new AssertionMessage(
+            "the attribute distance of [[[visitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+        ));
+
+        assertTrueTutor(getPriorityQueue(dijkstra).contains(visitedNode), () -> new AssertionMessage(
+            "the attribute distance of [[[visitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+        ));
     }
 
     @SuppressWarnings("unchecked")
@@ -178,7 +258,7 @@ public class DijkstraTest {
         when(dijkstra.finished(any(NodePointer.class))).thenReturn(true);
         dijkstra.initialize(nodePointers.get(0));
         dijkstra.run();
-        verify(dijkstra, never().description("Expected no call to method expandNode but received at least one")).expandNode(any(NodePointer.class));
+        verify(dijkstra, never().description("Expected no call to method expandNode when [[[finished((NodePointer<L, D>)]]] always returns false but received at least one")).expandNode(any(NodePointer.class));
     }
 
     @SuppressWarnings("unchecked")
@@ -200,7 +280,11 @@ public class DijkstraTest {
         dijkstra.initialize(startNode);
         List<NodePointer<Integer, Integer>> actual = dijkstra.run();
 
-        assertDijkstraResultEquals(expectedDistance, expectedPredecessor, expected, actual);
+        assertDijkstraResultEquals(expectedDistance, expectedPredecessor, expected, actual, startNode, () -> new AssertionMessage(
+            "[[[run()]]] did not return the correct value after calling [[[initialize(startNode)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + "[[[finished((NodePointer<L, D>)]]] has been overwritten with a reference implementation"),
+                new Pair<>("[[[startNode]]]", "a node of a graph with %d nodes. The [[[distance]]] of [[[startNode]]] is [[[10]]]".formatted(nodePointers.size())))
+        ));
     }
 
     @ParameterizedTest
@@ -221,7 +305,12 @@ public class DijkstraTest {
         dijkstra.initialize(startNode, predicate);
         List<NodePointer<Integer, Integer>> actual = dijkstra.run();
 
-        assertDijkstraResultEquals(expectedDistance, expectedPredecessor, expected, actual);
+        assertDijkstraResultEquals(expectedDistance, expectedPredecessor, expected, actual, startNode, () -> new AssertionMessage(
+            "[[[run()]]] did not return the correct value after calling [[[initialize(startNode, node -> node == endNode))]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION),
+                new Pair<>("[[[startNode]]] and [[[endNode]]]", "nodes of a graph with %d nodes. The [[[distance]]] of [[[startNode]]] is [[[10]]]"
+                    .formatted(nodePointers.size())))
+        ));
     }
 
     private Dijkstra<Integer, Integer> createInstance() throws NoSuchFieldException, IllegalAccessException {
@@ -259,6 +348,7 @@ public class DijkstraTest {
             expectedPredecessor.put(node, node.getPredecessor());
             node.reset();
         }
+
         startNode.setDistance(10);
 
         return expected;

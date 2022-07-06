@@ -6,6 +6,7 @@ import h07.PathFinder;
 import h07.implementation.NodePointerImpl;
 import h07.provider.PathProvider;
 import h07.transformer.MethodInterceptor;
+import kotlin.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,7 +15,7 @@ import org.sourcegrade.jagr.api.rubric.TestForSubmission;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static h07.Assertions.*;
 
 @TestForSubmission("h07")
 public class PathFinderTest {
@@ -39,8 +40,11 @@ public class PathFinderTest {
     public void testPathFinder(List<NodePointerImpl> nodes) {
         List<NodePointer<Integer, Integer>> actualNodes = new PathFinder<Integer, Integer>().apply(nodes.get(nodes.size() - 1));
 
-        assertEquals(nodes.size(), actualNodes.size(),
-            "the provided path does not contain the correct amount of nodes. Expected %d, actual %d".formatted(nodes.size(), actualNodes.size()));
+        assertEqualsTutor(nodes.size(), actualNodes.size(),
+            () -> new AssertionMessage("the provided path does not contain the correct amount of nodes. Expected %d, actual %d".formatted(nodes.size(), actualNodes.size()),
+                List.of(new Pair<>("[[[this]]]", "new PathFinder<>(node)"),
+                    new Pair<>("[[[node]]]", "a reference implementation with %d predecessors".formatted(nodes.size() - 1))))
+        );
 
         //check if the order is reversed for better assertion message
         boolean reversed = true;
@@ -51,11 +55,18 @@ public class PathFinderTest {
             }
         }
 
-        if (nodes.size() > 1 && reversed) fail("the order of the elements in the returned list is reversed");
+        if (nodes.size() > 1 && reversed) failTutor(new AssertionMessage("the order of the elements in the returned list is reversed",
+            List.of(new Pair<>("[[[this]]]", "new PathFinder<>(node)"),
+                new Pair<>("[[[node]]]", "a reference implementation with %d predecessors".formatted(nodes.size() - 1))))
+        );
 
         for (int i = 0; i < nodes.size(); i++) {
-            assertSame(nodes.get(i), actualNodes.get(i),
-                "node at position %d not correct. Expected %s, actual %s".formatted(i, nodes.get(i).toString(), actualNodes.get(i).toString()));
+            int finalI = i;
+            assertSameTutor(nodes.get(i), actualNodes.get(i),
+                () -> new AssertionMessage("node at position %d not correct. Expected %s, actual %s".formatted(finalI, nodes.get(finalI).toString(), actualNodes.get(finalI).toString()),
+                    List.of(new Pair<>("[[[this]]]", "new PathFinder<>(node)"),
+                        new Pair<>("[[[node]]]", "a reference implementation with %d predecessors".formatted(nodes.size() - 1))))
+            );
         }
 
     }
