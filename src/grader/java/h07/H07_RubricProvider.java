@@ -134,6 +134,7 @@ public class H07_RubricProvider implements RubricProvider {
         .shortDescription("Die Klasse Dijkstra<L, D> ist vollständig korrekt implementiert.")
         .grader(Grader.testAwareBuilder()
             .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testConstructor")))
+            .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testWithoutPredicate", List.class)))
             .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testDijkstra", List.class)))
             .pointsFailedMin()
             .pointsPassedMax().build())
