@@ -386,7 +386,7 @@ public class Assertions {
                                                   Supplier<AssertionMessage> message) {
         assertFalseTutor(actual.contains(startNode), () -> message.get().appendHead("The returned list contains the startNode"), false);
         assertEqualsTutor(expected.size(), actual.size(), () -> message.get().appendHead("The returned list did not return the correct amount of nodes"), false);
-        for (NodePointer<Integer, Integer> node : actual) {
+        for (NodePointer<Integer, Integer> node : expected) {
             assertTrueTutor(actual.contains(node), () -> message.get().appendHead(
                 "The returned list does not contain the node %s".formatted(Objects.toString(node))), false);
             assertEqualsTutor(expectedDistance.get(node), node.getDistance(), () -> message.get().appendHead(
