@@ -1,5 +1,6 @@
 package h07;
 
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
@@ -463,6 +464,53 @@ public class PublicTests {
         private void assertStartNode() {
             assertEquals(0, startNode.getDistance());
             assertNull(startNode.getPredecessor());
+        }
+    }
+
+    @Nested
+    class PathFinderTest {
+
+        List<NodePointer<Integer, Integer>> expectedPath = new ArrayList<>();
+
+        @Test
+        void testPathFinder() {
+            createPath();
+
+            var pathFinder = new PathFinder<Integer, Integer>();
+            var actual = pathFinder.apply(expectedPath.get(expectedPath.size()-1));
+
+            assertEquals(expectedPath.size(), actual.size());
+            for (int i = 0; i < expectedPath.size(); i++) {
+                assertSame(expectedPath.get(i), actual.get(i));
+            }
+        }
+
+        private void createPath() {
+            var node = Node.A.nodePointer();
+
+            while (node != null) {
+                expectedPath.add(node);
+
+                var next = getNextNode(node);
+                if (next != null) {
+                    next.setPredecessor(node);
+                }
+
+                node = next;
+            }
+        }
+
+        private @Nullable NodePointer<Integer, Integer> getNextNode(NodePointer<Integer, Integer> node) {
+            var arcs = node.outgoingArcs();
+            while (arcs.hasNext()) {
+                var dest = arcs.next().destination();
+
+                if (!expectedPath.contains(dest)) {
+                    return dest;
+                }
+            }
+
+            return null;
         }
     }
 
