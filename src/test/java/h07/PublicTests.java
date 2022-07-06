@@ -517,6 +517,7 @@ public class PublicTests {
     @Nested
     class Point2DCollectionTest {
 
+        @Test
         void testConstructorAndGetPoints() {
             var point2DCollection = new Point2DCollection(
                 20,
