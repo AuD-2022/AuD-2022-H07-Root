@@ -67,10 +67,14 @@ public class ArcPointerPoint2DTest extends Point2DPointerTest{
                               HashMap<Pair<Point2D, Point2D>, ArcPointerPoint2D> existingArcPointers,
                               Point2DCollection collection) {
 
-        Iterator<Point2D> iterator = collection.getPoints().iterator();
-        Point2D source = iterator.next();
-        Point2D destination = iterator.next();
-        ArcPointerPoint2D actualArcPointer = new ArcPointerPoint2D(existingNodePointers, existingArcPointers, source, destination, collection);
+        Pair<Point2D, Point2D> arcToAdd = existingArcPointers.keySet().iterator().next();
+        Point2D source = arcToAdd.getElement1();
+        Point2D destination = arcToAdd.getElement2();
+
+        existingArcPointers.remove(arcToAdd);
+
+        ArcPointerPoint2D actualArcPointer = new ArcPointerPoint2D(existingNodePointers,
+            existingArcPointers, source, destination, collection);
 
         double length = Math.sqrt(Math.pow(source.getX() - destination.getX(), 2) + Math.pow(source.getY() - destination.getY(), 2));
         double difference = Math.abs(length - actualArcPointer.getLength());
@@ -87,12 +91,17 @@ public class ArcPointerPoint2DTest extends Point2DPointerTest{
                                    HashMap<Pair<Point2D, Point2D>, ArcPointerPoint2D> existingArcPointers,
                                    Point2DCollection collection) throws NoSuchFieldException, IllegalAccessException {
 
-        Iterator<Point2D> iterator = collection.getPoints().iterator();
-        Point2D source = iterator.next();
-        Point2D destination = iterator.next();
+        Pair<Point2D, Point2D> arcToAdd = existingArcPointers.keySet().iterator().next();
+        Point2D source = arcToAdd.getElement1();
+        Point2D destination = arcToAdd.getElement2();
+
+        existingArcPointers.remove(arcToAdd);
+
+        ArcPointerPoint2D actualArcPointer = new ArcPointerPoint2D(existingNodePointers,
+            existingArcPointers, source, destination, collection);
 
         //existingNodes contains destination node
-        NodePointer<Double, Double> actualDestination = new ArcPointerPoint2D(existingNodePointers, existingArcPointers, source, destination, collection).destination();
+        NodePointer<Double, Double> actualDestination = actualArcPointer.destination();
 
         assertInstanceOf(NodePointerPoint2D.class, actualDestination, "the [[[nodePointer]]] returned by [[[destination()]]] does not have the correct dynamic type if the [[[existingNodePointers]]] map contains the destination point");
 

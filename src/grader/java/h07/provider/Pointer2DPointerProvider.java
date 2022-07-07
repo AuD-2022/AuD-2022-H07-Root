@@ -23,6 +23,7 @@ public class Pointer2DPointerProvider implements ArgumentsProvider {
             List<Point2D> existingPoints = new ArrayList<>(POINTS_COUNT);
 
             for (int j = 0; j < POINTS_COUNT - 1; j++) existingPoints.add(new Point2D(RANDOM.nextDouble(MIN_CORD, MAX_CORD), RANDOM.nextDouble(MIN_CORD, MAX_CORD)));
+
             //add a point with MaxArcLength distance to the first point
             existingPoints.add(new Point2D(existingPoints.get(0).getX(), existingPoints.get(0).getY() + MAX_ARC_LENGTH_POINT));
 
@@ -40,6 +41,7 @@ public class Pointer2DPointerProvider implements ArgumentsProvider {
             //create mocked arcPointer instances
             for (Point2D from : existingPoints) {
                 for (Point2D to : existingPoints) {
+                    if (from == to) continue;
                     double length = Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2));
                     if (length > MAX_ARC_LENGTH_POINT) continue;
                     ArcPointerPoint2D mock = spy(new ArcPointerPoint2D(existingNodePointers, existingArcPointers, from, to, collection));
