@@ -4,10 +4,7 @@ import h07.Dijkstra;
 import h07.IPriorityQueue;
 import h07.IllegalMethodsCheck;
 import h07.NodePointer;
-import h07.implementation.ArcPointerImpl;
-import h07.implementation.DijkstraImpl;
-import h07.implementation.NodePointerImpl;
-import h07.implementation.PriorityQueueImpl;
+import h07.implementation.*;
 import h07.provider.GraphToNodePointerImplProvider;
 import h07.transformer.MethodInterceptor;
 import kotlin.Pair;
@@ -24,6 +21,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static h07.TestConstants.MAX_NODE_COUNT;
 import static h07.TestConstants.RANDOM;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -40,7 +38,7 @@ public class DijkstraTest {
     public static final Function<Comparator<NodePointer<Integer, Integer>>, IPriorityQueue<NodePointer<Integer, Integer>>> QUEUE_FACTORY = comparator -> {
         queueFactoryInvoked = true;
         queueFactoryInvokedWith = comparator;
-        IPriorityQueue<NodePointer<Integer, Integer>> toReturn = new PriorityQueueImpl<>(comparator);
+        IPriorityQueue<NodePointer<Integer, Integer>> toReturn = new PriorityQueueHeapImpl<>(comparator, MAX_NODE_COUNT);
         usedQueue = toReturn;
         return toReturn;
     };
@@ -106,7 +104,7 @@ public class DijkstraTest {
 
         dijkstra.initialize(startNode);
 
-        assertEqualsTutor(1, getPriorityQueue(dijkstra).queue.size(), () -> new AssertionMessage(
+        assertEqualsTutor(1, getPriorityQueue(dijkstra).size(), () -> new AssertionMessage(
             "the [[[priorityQueue]]] does not contain the correct amount of items after calling [[[initialize(startNode)]]]",
             List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". One other node has been added to the [[[queue]]] before calling the method"),
                 new Pair<>("Argument #1 - [[[startNode]]]", startNode.toString()))
@@ -135,7 +133,7 @@ public class DijkstraTest {
 
         dijkstra.initialize(startNode, predicate);
 
-        assertEqualsTutor(1, getPriorityQueue(dijkstra).queue.size(), () -> new AssertionMessage(
+        assertEqualsTutor(1, getPriorityQueue(dijkstra).size(), () -> new AssertionMessage(
             "the [[[priorityQueue]]] does not contain the correct amount of items after calling [[[initialize(startNode, node -> node == startNode)]]]",
             List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". One other node has been added to the [[[queue]]] before calling the method"),
                 new Pair<>("Argument #1 - [[[startNode]]]", startNode.toString()))
@@ -355,7 +353,7 @@ public class DijkstraTest {
 
         Field queue = Dijkstra.class.getDeclaredField("queue");
         queue.setAccessible(true);
-        queue.set(dijkstra, new PriorityQueueImpl<>((Comparator<NodePointer<Integer, Integer>>) (o1, o2) -> NODE_CMP.compare(o1.getDistance(), o2.getDistance())));
+        queue.set(dijkstra, QUEUE_FACTORY.apply((o1, o2) -> NODE_CMP.compare(o1.getDistance(), o2.getDistance())));
 
         Field comparator = Dijkstra.class.getDeclaredField("comparator");
         comparator.setAccessible(true);
@@ -406,10 +404,10 @@ public class DijkstraTest {
     }
 
     @SuppressWarnings("unchecked")
-    private PriorityQueueImpl<NodePointer<Integer, Integer>> getPriorityQueue(Dijkstra<Integer, Integer> dijkstra) throws IllegalAccessException, NoSuchFieldException {
+    private PriorityQueueHeapImpl<NodePointer<Integer, Integer>> getPriorityQueue(Dijkstra<Integer, Integer> dijkstra) throws IllegalAccessException, NoSuchFieldException {
         Field queue = Dijkstra.class.getDeclaredField("queue");
         queue.setAccessible(true);
-        return (PriorityQueueImpl<NodePointer<Integer, Integer>>) queue.get(dijkstra);
+        return (PriorityQueueHeapImpl<NodePointer<Integer, Integer>>) queue.get(dijkstra);
     }
 
     @SuppressWarnings("unchecked")
