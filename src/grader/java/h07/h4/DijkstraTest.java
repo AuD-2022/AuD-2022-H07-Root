@@ -84,12 +84,12 @@ public class DijkstraTest {
         queueFactoryInvoked = false;
         Dijkstra<Integer, Integer> instance = new Dijkstra<>(NODE_CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
 
-        assertTrue(queueFactoryInvoked, "the queueFactory wasn't used to create the queue");
+        assertTrue(queueFactoryInvoked, "the [[[queueFactory]]] wasn't used to create the queue");
         assertQueueFactoryComparatorCorrect(queueFactoryInvokedWith);
 
-        assertSame(NODE_CMP, getComparator(instance), "the attribute comparator does not have the correct value");
-        assertSame(DISTANCE_FUNCTION, getDistanceFunction(instance), "the attribute distanceFunction does not have the correct value");
-        assertSame(usedQueue, getPriorityQueue(instance), "the attribute queue does not have the correct value");
+        assertSame(NODE_CMP, getComparator(instance), "the attribute [[[comparator]]] does not have the correct value");
+        assertSame(DISTANCE_FUNCTION, getDistanceFunction(instance), "the attribute [[[distanceFunction]]] does not have the correct value");
+        assertSame(usedQueue, getPriorityQueue(instance), "the attribute [[priorityQueue]]] does not have the correct value");
     }
 
     @ParameterizedTest
@@ -98,12 +98,25 @@ public class DijkstraTest {
 
         Dijkstra<Integer, Integer> dijkstra = createInstance();
 
-        getPriorityQueue(dijkstra).add(new NodePointerImpl());
-        NodePointerImpl startNode = nodePointers.get(0);
+        //item to be cleared
+        getPriorityQueue(dijkstra).add(new NodePointerImpl(10).setName("otherNode"));
+
+        NodePointerImpl startNode = nodePointers.get(0).setName("startNode");
+        startNode.setDistance(10);
+
         dijkstra.initialize(startNode);
 
-        assertEquals(1, getPriorityQueue(dijkstra).queue.size(), "the priorityQueue does not contain the correct amount of items");
-        assertTrue(getPriorityQueue(dijkstra).queue.contains(startNode), "the priorityQueue does not contain the startNode");
+        assertEqualsTutor(1, getPriorityQueue(dijkstra).queue.size(), () -> new AssertionMessage(
+            "the [[[priorityQueue]]] does not contain the correct amount of items after calling [[[initialize(startNode)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". One other node has been added to the [[[queue]]] before calling the method"),
+                new Pair<>("Argument #1 - [[[startNode]]]", startNode.toString()))
+        ));
+
+        assertTrueTutor(getPriorityQueue(dijkstra).contains(startNode), () -> new AssertionMessage(
+            "the priorityQueue does not contain the [[[startNode]]] after calling [[[initialize(startNode)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". One other node has been added to the [[[queue]]] before calling the method"),
+                new Pair<>("Argument #1 - [[[startNode]]]", startNode.toString()))
+        ), false);
     }
 
     @ParameterizedTest
@@ -112,13 +125,33 @@ public class DijkstraTest {
 
         Dijkstra<Integer, Integer> dijkstra = createInstance();
 
-        getPriorityQueue(dijkstra).add(new NodePointerImpl());
-        NodePointerImpl startNode = nodePointers.get(0);
+        //item to be cleared
+        getPriorityQueue(dijkstra).add(new NodePointerImpl(10).setName("otherNode"));
+
+        NodePointerImpl startNode = nodePointers.get(0).setName("startNode");
+        startNode.setDistance(10);
+
         Predicate<NodePointer<Integer, Integer>> predicate = node -> node == startNode;
+
         dijkstra.initialize(startNode, predicate);
-        assertEquals(1, getPriorityQueue(dijkstra).queue.size(), "the priorityQueue does not contain the correct amount of items");
-        assertTrue(getPriorityQueue(dijkstra).contains(startNode), "the priorityQueue does not contain the startNode");
-        assertSame(predicate, getPredicate(dijkstra), "the predicate attribute does not contain the correct value");
+
+        assertEqualsTutor(1, getPriorityQueue(dijkstra).queue.size(), () -> new AssertionMessage(
+            "the [[[priorityQueue]]] does not contain the correct amount of items after calling [[[initialize(startNode, node -> node == startNode)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". One other node has been added to the [[[queue]]] before calling the method"),
+                new Pair<>("Argument #1 - [[[startNode]]]", startNode.toString()))
+        ));
+
+        assertTrueTutor(getPriorityQueue(dijkstra).contains(startNode), () -> new AssertionMessage(
+            "the priorityQueue does not contain the [[[startNode]]] after calling [[[initialize(startNode, node -> node == startNode)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". One other node has been added to the [[[queue]]] before calling the method"),
+                new Pair<>("Argument #1 - [[[startNode]]]", startNode.toString()))
+        ), false);
+
+        assertSameTutor(predicate, getPredicate(dijkstra), () -> new AssertionMessage(
+            "the attribute [[[predicate]]] does not contain the correct value after calling [[[initialize(startNode, node -> node == startNode)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". One other node has been added to the [[[queue]]] before calling the method"),
+                new Pair<>("Argument #1 - [[[startNode]]]", startNode.toString()))
+        ), false);
     }
 
     @Test
@@ -256,7 +289,11 @@ public class DijkstraTest {
         Dijkstra<Integer, Integer> dijkstra = createInstance();
 
         when(dijkstra.finished(any(NodePointer.class))).thenReturn(true);
-        dijkstra.initialize(nodePointers.get(0));
+
+        NodePointerImpl startNode = nodePointers.get(0);
+        startNode.setDistance(10);
+
+        dijkstra.initialize(startNode);
         dijkstra.run();
         verify(dijkstra, never().description("Expected no call to method expandNode when [[[finished((NodePointer<L, D>)]]] always returns false but received at least one")).expandNode(any(NodePointer.class));
     }

@@ -73,12 +73,17 @@ public class Assertions {
         assertNullTutor(actual, message, true);
     }
 
-    public static void assertSameTutor(Object expected, Object actual, Supplier<AssertionMessage> message) {
+    public static void assertSameTutor(Object expected, Object actual, Supplier<AssertionMessage> message, boolean addExpected) {
         if (actual != expected) {
-            throw new AssertionFailedError(message.get().appendExpected(Objects.toString(expected))
-                .appendActual(Objects.toString(actual)).toString());
+            throw new AssertionFailedError(addExpected ? message.get().appendExpected(Objects.toString(expected))
+                .appendActual(Objects.toString(actual)).toString() : message.get().toString());
         }
     }
+
+    public static void assertSameTutor(Object expected, Object actual, Supplier<AssertionMessage> message) {
+        assertSameTutor(expected, actual, message, true);
+    }
+
 
     public static void failTutor(AssertionMessage message) {
         throw new AssertionFailedError(message.toString());
