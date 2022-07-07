@@ -56,8 +56,11 @@ public class GraphProvider implements ArgumentsProvider {
 
             //add a node with no outgoing arcs
             GraphNode<Integer> node = new GraphNode<>();
-            nodes.get(0).getOutgoingArcs().add(new GraphArc<>(0, node));
+            nodes.get(0).getOutgoingArcs().add(new GraphArc<>(10, node));
             nodes.add(node);
+
+            //add an arc that points to node itself
+            nodes.get(0).getOutgoingArcs().add(new GraphArc<>(10, nodes.get(0)));
 
             arguments.add(new Graph<>(nodes));
         }
