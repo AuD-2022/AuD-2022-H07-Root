@@ -1,6 +1,7 @@
 package h07;
 
 import h07.implementation.NodePointerImpl;
+import h07.implementation.PriorityQueueHeapImpl;
 import h07.implementation.QueueEntry;
 
 import kotlin.Pair;
@@ -142,18 +143,37 @@ public class Assertions {
             () -> message.get().appendHead("The heap array does not contain the expected element at the index specified in the indexMap"));
     }
 
-    public static void assertHeapCorrect(QueueEntry[] heap, List<QueueEntry> elements, Supplier<AssertionMessage> message) {
-        QueueEntry[] actualHeap = new QueueEntry[elements.size()];
-        System.arraycopy(heap, 0, actualHeap, 0, elements.size());
+    public static void assertPriorityQueueCorrect(PriorityQueueHeapImpl<QueueEntry> expectedQueue, PriorityQueueHeap<QueueEntry> actualQueue, Supplier<AssertionMessage> message) throws NoSuchFieldException, IllegalAccessException {
+        assertEqualsTutor(expectedQueue.size(), getSize(actualQueue), () -> message.get().appendHead("The value of attribute [[[size]]] is not correct"));
+        assertHeapCorrect(expectedQueue, actualQueue, message);
+        assertIndexMapCorrect(getHeap(actualQueue), getIndexMap(actualQueue), expectedQueue.size(), message);
+    }
+
+    public static void assertHeapCorrect(PriorityQueueHeapImpl<QueueEntry> expectedQueue, PriorityQueueHeap<QueueEntry> actualQueue, Supplier<AssertionMessage> message) {
+        QueueEntry[] actualHeap = new QueueEntry[expectedQueue.size()];
+        System.arraycopy(getHeap(actualQueue), 0, actualHeap, 0, expectedQueue.size());
 
         for (int i = 0; i < actualHeap.length; i++) {
             int finalI = i;
-            assertNotNullTutor(actualHeap[i], () -> message.get().appendHead("The heap array contained an unexpected null element at position %d".formatted(finalI)), false);
+            assertNotNullTutor(actualHeap[i], () -> message.get().appendHead("The [[[heap]]] array contained an unexpected [[[null]]] element at position %d".formatted(finalI)), false);
         }
 
-        assertListContainsAllWithPredicate(elements, Arrays.stream(actualHeap).collect(Collectors.toList()), Objects::equals, "heap array", () -> message.get().appendHead("The heap array does not contain the correct elements"));
+        assertListContainsAllWithPredicate(expectedQueue.toList(), Arrays.stream(actualHeap).collect(Collectors.toList()), Objects::equals, "[[[heap]]] array", () -> message.get().appendHead("The [[[heap]]] array does not contain the correct elements"));
 
         assertHeapProperty(actualHeap, 0, message);
+
+        assertCorrectOrder(getHeap(expectedQueue), actualHeap, message);
+    }
+
+    public static void assertCorrectOrder(QueueEntry[] expectedHeap, QueueEntry[] actualHeap, Supplier<AssertionMessage> message) {
+
+        for (int i = 0; i < actualHeap.length; i++) {
+            int finalI = i;
+            assertSameTutor(expectedHeap[i], actualHeap[i], () -> message.get().appendHead(
+                "The order of the elements in the [[[heap]]] is not correct at position [[[queue[%d] == %s]]]".formatted(finalI, actualHeap[finalI])
+            ));
+        }
+
     }
 
     public static void assertHeapProperty(QueueEntry[] heap, int index, Supplier<AssertionMessage> message) {
@@ -206,12 +226,6 @@ public class Assertions {
     public static <T> void assertArrayDoesNotContains(T[] array, T element, int size, Supplier<AssertionMessage> message) {
         List<T> list = Arrays.stream(array).limit(size).toList();
         assertFalseTutor(list.contains(element), () -> message.get().appendHead("The heap array contained the element %s".formatted(element.toString())));
-    }
-
-    public static void assertPriorityQueueCorrect(List<QueueEntry> expectedEntries, PriorityQueueHeap<QueueEntry> actualQueue, Supplier<AssertionMessage> message) throws NoSuchFieldException, IllegalAccessException {
-        assertEqualsTutor(expectedEntries.size(), getSize(actualQueue), () -> message.get().appendHead("Value of size attribute is not correct"));
-        assertHeapCorrect(getHeap(actualQueue), expectedEntries, message);
-        assertIndexMapCorrect(getHeap(actualQueue), getIndexMap(actualQueue), getSize(actualQueue), message);
     }
 
     public static void assertArcPointerGraphEquals(

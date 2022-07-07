@@ -13,7 +13,7 @@ import h07.h7.NodePointerAdjacencyMatrixTest;
 import h07.h8.ArcPointerPoint2DTest;
 import h07.h8.NodePointerPoint2DTest;
 import h07.h8.Point2DCollectionTest;
-import h07.implementation.QueueEntry;
+import h07.implementation.PriorityQueueHeapImpl;
 import h07.transformer.AccessTransformer;
 import h07.transformer.BytecodeTransformations;
 import org.sourcegrade.jagr.api.rubric.*;
@@ -73,12 +73,12 @@ public class H07_RubricProvider implements RubricProvider {
         () -> PriorityQueueHeapTest.class.getDeclaredMethod("testAddComplex"));
 
     private static final Criterion H3_4 = DEFAULT_CRITERION.apply("Die Methoe delete entfernt das Element aus dem Array und der Map.",
-        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testDeleteSimple", QueueEntry[].class));
+        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testDeleteSimple", PriorityQueueHeapImpl.class));
 
     private static final Criterion H3_5 = Criterion.builder()
         .shortDescription("Die Methode delete ist vollständig korrekt implementiert.")
         .grader(Grader.testAwareBuilder()
-            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testDeleteComplex", QueueEntry[].class)))
+            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testDeleteComplex", PriorityQueueHeapImpl.class)))
             .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testDeleteUpwardCorrectionEdgeCase")))
             .pointsFailedMin()
             .pointsPassedMax()
@@ -88,21 +88,21 @@ public class H07_RubricProvider implements RubricProvider {
     private static final Criterion H3_6 = Criterion.builder()
         .shortDescription("Die Methoden getFront() und deleteFront() sind vollständig korrekt implementiert.")
         .grader(Grader.testAwareBuilder()
-            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testGetFront", QueueEntry[].class)))
-            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testDeleteFront", QueueEntry[].class)))
+            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testGetFront", PriorityQueueHeapImpl.class)))
+            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testDeleteFront", PriorityQueueHeapImpl.class)))
             .pointsFailedMin()
             .pointsPassedMax().build())
         .build();
 
 
     private static final Criterion H3_7 = DEFAULT_CRITERION.apply("Die Methode getPosition ist vollständig korrekt implementiert.",
-        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testGetPosition", QueueEntry[].class));
+        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testGetPosition", PriorityQueueHeapImpl.class));
 
     private static final Criterion H3_8 = DEFAULT_CRITERION.apply("Die Methode contains ist vollständig korrekt implementiert.",
-        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testContains", QueueEntry[].class));
+        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testContains", PriorityQueueHeapImpl.class));
 
     private static final Criterion H3_9 = DEFAULT_CRITERION.apply("Die Methode clear ist vollständig korrekt implementiert.",
-        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testClear", QueueEntry[].class));
+        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testClear", PriorityQueueHeapImpl.class));
 
     private static final Criterion H3_10 = DEFAULT_CRITERION.apply("Die Klasse PriorityQueueHeap<T> ist vollständig korrekt implementiert.",
         () -> PriorityQueueHeapTest.class.getDeclaredMethod("testAll"));

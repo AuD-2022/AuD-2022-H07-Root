@@ -3,8 +3,8 @@ package h07.implementation;
 import h07.IPriorityQueue;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("Duplicates")
 public class PriorityQueueHeapImpl<T> implements IPriorityQueue<T> {
@@ -149,6 +149,11 @@ public class PriorityQueueHeapImpl<T> implements IPriorityQueue<T> {
     public void clear() {
         size = 0;
         indexMap.clear();
+        Arrays.fill(heap, null);
+    }
+
+    public List<T> toList() {
+        return Arrays.stream(heap).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
@@ -167,4 +172,9 @@ public class PriorityQueueHeapImpl<T> implements IPriorityQueue<T> {
     public Object[] getInternalHeap() {
         return heap;
     }
+
+    public HashMap<T, Integer> getIndexMap() {
+        return indexMap;
+    }
+
 }

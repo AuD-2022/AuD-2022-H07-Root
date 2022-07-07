@@ -1,10 +1,13 @@
 package h07.provider;
 
+import h07.implementation.PriorityQueueHeapImpl;
 import h07.implementation.QueueEntry;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static h07.TestConstants.*;
@@ -15,18 +18,20 @@ public class QueueEntryHeapProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 
-        Stream<QueueEntry[]> arguments = Stream.empty();
+        List<PriorityQueueHeapImpl<QueueEntry>> arguments = new ArrayList<>(ARGUMENT_COUNT);
 
         for (int i = 0; i < ARGUMENT_COUNT; i++) {
-            QueueEntry[] array = QueueEntry.createRandomEntryStream()
+
+            PriorityQueueHeapImpl<QueueEntry> expectedQueue = new PriorityQueueHeapImpl<>(QUEUE_ENTRY_CMP, HEAP_CAPACITY);
+
+            QueueEntry.createRandomEntryStream()
                 .limit(HEAP_CAPACITY / 2)
                 .distinct()
-                .sorted(QUEUE_ENTRY_CMP.reversed())
-                .toArray(ignored -> new QueueEntry[HEAP_CAPACITY]);
+                .forEach(expectedQueue::add);
 
-            arguments = Stream.concat(arguments, Stream.<QueueEntry[]>of(array));
+            arguments.add(expectedQueue);
         }
 
-        return arguments.map((QueueEntry[] entries) -> Arguments.of((Object) entries));
+        return arguments.stream().map(Arguments::of);
     }
 }
