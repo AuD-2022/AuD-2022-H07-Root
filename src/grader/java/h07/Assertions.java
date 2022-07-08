@@ -144,7 +144,6 @@ public class Assertions {
     }
 
     public static void assertPriorityQueueCorrect(PriorityQueueHeapImpl<QueueEntry> expectedQueue, PriorityQueueHeap<QueueEntry> actualQueue, Supplier<AssertionMessage> message) throws NoSuchFieldException, IllegalAccessException {
-        assertEqualsTutor(expectedQueue.size(), getSize(actualQueue), () -> message.get().appendHead("The value of attribute [[[size]]] is not correct"));
         assertHeapCorrect(expectedQueue, actualQueue, message);
         assertIndexMapCorrect(getHeap(actualQueue), getIndexMap(actualQueue), expectedQueue.size(), message);
     }

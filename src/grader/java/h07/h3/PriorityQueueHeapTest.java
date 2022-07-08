@@ -315,11 +315,6 @@ public class PriorityQueueHeapTest {
 
         actualQueue.clear();
 
-        assertEqualsTutor(0, getSize(actualQueue), () -> new AssertionMessage(
-            "the attribute [[[size]]] does not have the correct value after [[[clear()]]] was called",
-            List.of(new Pair<>("[[[this]]]", STANDARD_INITIALIZE_STRING))
-        ));
-
         assertEqualsTutor(0, getIndexMap(actualQueue).size(), () -> new AssertionMessage(
             "the attribute [[[indexMap]]] does not contain the correct amount of items after [[[clear()]]] was called",
             List.of(new Pair<>("[[[this]]]", STANDARD_INITIALIZE_STRING))
