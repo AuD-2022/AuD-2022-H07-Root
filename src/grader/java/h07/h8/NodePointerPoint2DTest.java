@@ -118,9 +118,10 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         List<ArcPointerPoint2D> actualOutgoingArcs = arcPointerListToArcPointerPoint2DList(iteratorToList(node.outgoingArcs()));
 
         //create a message with more information about why the test failed
-        String extendedMessage = createExtendedMessage(expectedOutgoingArcs, actualOutgoingArcs, point);
+        String extendedMessage = createExtendedMessage(actualOutgoingArcs, point);
 
-        assertEqualsTutor(expectedOutgoingArcs.size(), actualOutgoingArcs.size(), () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct amount of arcs",
+        assertEqualsTutor(expectedOutgoingArcs.size(), actualOutgoingArcs.size(), () -> new AssertionMessage(
+            "[[[outgoingArcs()]]] did not return the correct amount of arcs" + extendedMessage,
             List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
                 new kotlin.Pair<>("[[[point]]]", "a [[[Point]]] whose outgoing arcs are keys of the [[[existingArcPointers]]] map")))
         );
@@ -139,11 +140,10 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         actualOutgoingArcs = arcPointerListToArcPointerPoint2DList(iteratorToList(node.outgoingArcs()));
 
         //create a message with more information about why the test failed
-        String extendedMessage2 = createExtendedMessage(expectedOutgoingArcs, actualOutgoingArcs, point);
-
+        String extendedMessage2 = createExtendedMessage(actualOutgoingArcs, point);
 
         assertEqualsTutor(expectedOutgoingArcs.size(), actualOutgoingArcs.size(),
-            () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct amount of arcs",
+            () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct amount of arcs" + extendedMessage2,
                 List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
                     new kotlin.Pair<>("[[[point]]]", "a [[[Point]]] whose outgoing arcs are not keys of the [[[existingArcPointers]]] map")))
         );
@@ -166,14 +166,24 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         );
     }
 
-    private static String createExtendedMessage(List<ArcPointerPoint2D> expectedOutgoingArcs, List<ArcPointerPoint2D> actualOutgoingArcs, Point2D point) throws NoSuchFieldException, IllegalAccessException {
+    private static String createExtendedMessage(List<ArcPointerPoint2D> actualOutgoingArcs, Point2D point) {
         String extendedMessage = "";
-        if (expectedOutgoingArcs.size() == actualOutgoingArcs.size() - 1) {
-            List<ArcPointerPoint2D> actualOutgoingArcsCopy = new ArrayList<>(actualOutgoingArcs);
-            actualOutgoingArcsCopy.removeAll(expectedOutgoingArcs);
-            if (actualOutgoingArcsCopy.size() == 1 && getDestination(actualOutgoingArcsCopy.get(0)) == point) {
-                extendedMessage = ". An arc to the node itself was returned";
+
+        if (actualOutgoingArcs.size() == 0) return extendedMessage;
+
+        if (actualOutgoingArcs.stream().map(arc -> {
+            try {
+                return getDestination(arc);
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                fail("could not read field of class ArcPointerPoint2D");//shouldn't happen
+                return null;
             }
+        }).anyMatch(dest -> dest == point)) {
+            extendedMessage += ". An arc to the node itself was returned";
+        }
+
+        if (actualOutgoingArcs.stream().map(ArcPointerPoint2D::getLength).noneMatch(length -> length == MAX_ARC_LENGTH_POINT)) {
+            extendedMessage += ". The arc with [[[length == maxArcLength]]] wasn't returned";
         }
 
         return extendedMessage;

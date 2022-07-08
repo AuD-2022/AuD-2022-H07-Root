@@ -33,7 +33,7 @@ public class IllegalMethodsCheck {
                     "^java/lang/String format(ting)?\\(.*\\)Ljava/lang/String;$",
                     "^java/lang/.+? (boolean|byte|short|char|int|long|float|double)Value\\(\\).+",
                     "^java/lang/Class desiredAssertionStatus\\(\\)Z",
-                    "^java/util/Objects hash.+",
+                    "^java/util/Objects .+",
                     "^java/lang/Object getClass.+",
                     "^java/lang/Math.+",
                     "^java/util/Collections.+"

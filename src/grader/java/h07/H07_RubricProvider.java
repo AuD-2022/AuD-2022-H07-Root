@@ -235,7 +235,7 @@ public class H07_RubricProvider implements RubricProvider {
         () -> NodePointerPoint2DTest.class.getDeclaredMethod("testOutgoingArcs", HashMap.class, HashMap.class, Point2DCollection.class));
 
     private static final Criterion H8_3 = Criterion.builder()
-        .shortDescription("Die Methode NodePointerPoint2D ist vollständig korrekt implementiert.")
+        .shortDescription("Die Klasse NodePointerPoint2D ist vollständig korrekt implementiert.")
         .grader(Grader.testAwareBuilder()
             .requirePass(JUnitTestRef.ofMethod(() -> NodePointerPoint2DTest.class.getDeclaredMethod("testConstructor", HashMap.class, HashMap.class, Point2DCollection.class)))
             .requirePass(JUnitTestRef.ofMethod(() -> NodePointerPoint2DTest.class.getDeclaredMethod("testPredecessor", HashMap.class, HashMap.class, Point2DCollection.class)))
@@ -246,7 +246,7 @@ public class H07_RubricProvider implements RubricProvider {
         .build();
 
     private static final Criterion H8_4 = Criterion.builder()
-        .shortDescription("Die Methode ArcPointerPoint2D ist vollständig korrekt implementiert.")
+        .shortDescription("Die Klasse ArcPointerPoint2D ist vollständig korrekt implementiert.")
         .grader(Grader.testAwareBuilder()
             .requirePass(JUnitTestRef.ofMethod(() -> ArcPointerPoint2DTest.class.getDeclaredMethod("testConstructor", HashMap.class, HashMap.class, Point2DCollection.class)))
             .requirePass(JUnitTestRef.ofMethod(() -> ArcPointerPoint2DTest.class.getDeclaredMethod("testGetLength", HashMap.class, HashMap.class, Point2DCollection.class)))

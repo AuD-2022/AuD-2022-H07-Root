@@ -79,6 +79,11 @@ public class ArcPointerPoint2DTest extends Point2DPointerTest{
         double length = Math.sqrt(Math.pow(source.getX() - destination.getX(), 2) + Math.pow(source.getY() - destination.getY(), 2));
         double difference = Math.abs(length - actualArcPointer.getLength());
 
+        assertFalseTutor(actualArcPointer.getLength().equals(Double.NaN), () -> new AssertionMessage("[[[getLength()]]] returned [[NaN]]]",
+            List.of(CONSTRUCTOR_DESCRIPTION, new kotlin.Pair<>("[[[source, destination]]]", "two points with a distance of %f".formatted(length)))),
+            false
+        );
+
         assertTrueTutor(difference < 1e-5, () -> new AssertionMessage(
             "[[[getLength()]]] did not return the correct value. Expected a difference of less than 1e-5, but was %f".formatted(difference),
                 List.of(CONSTRUCTOR_DESCRIPTION, new kotlin.Pair<>("[[[source, destination]]]", "two points with a distance of %f".formatted(length))))

@@ -45,11 +45,14 @@ public class Assertions {
     }
 
     public static void assertFalseTutor(boolean actual, Supplier<AssertionMessage> message) {
-        assertTrueTutor(!actual, message, true);
+        assertFalseTutor(actual, message, true);
     }
 
     public static void assertFalseTutor(boolean actual, Supplier<AssertionMessage> message, boolean addExpected) {
-        assertTrueTutor(!actual, message, addExpected);
+        if (actual) {
+            throw new AssertionFailedError(addExpected ? message.get().appendExpected("false")
+                .appendActual("true").toString() : message.get().toString());
+        }
     }
 
     public static void assertNotNullTutor(Object actual, Supplier<AssertionMessage> message, boolean addExpected) {
@@ -187,15 +190,15 @@ public class Assertions {
         assertHeapPropertyChild(heap, index, parent, rightChildIndex, message);
     }
 
-    public static void assertHeapPropertyChild(QueueEntry[] heap, int index, QueueEntry parent, int ChildIndex, Supplier<AssertionMessage> message) {
-        if (ChildIndex < heap.length) {
-            QueueEntry leftChild = heap[ChildIndex];
+    public static void assertHeapPropertyChild(QueueEntry[] heap, int index, QueueEntry parent, int childIndex, Supplier<AssertionMessage> message) {
+        if (childIndex < heap.length) {
+            QueueEntry child = heap[childIndex];
 
-            if (leftChild != null){
-                assertTrueTutor(QUEUE_ENTRY_CMP.compare(parent, leftChild) >= 0,
-                    () -> message.get().appendHead("The Heap array does not satisfy the heap property for parent heap[%d] = %d and left child heap[%d] = %d"
-                        .formatted(index, parent.value, ChildIndex, leftChild.value)));
-                assertHeapProperty(heap, ChildIndex, message);
+            if (child != null){
+                assertTrueTutor(QUEUE_ENTRY_CMP.compare(parent, child) >= 0,
+                    () -> message.get().appendHead("The Heap array does not satisfy the heap property for parent heap[%d] = %s and %s child heap[%d] = %s"
+                        .formatted(index, parent, childIndex % 2 == 0 ? "right" : "left", childIndex, child)));
+                assertHeapProperty(heap, childIndex, message);
             }
         }
     }
@@ -403,14 +406,14 @@ public class Assertions {
                                                   NodePointer<Integer, Integer> startNode,
                                                   Supplier<AssertionMessage> message) {
         assertFalseTutor(actual.contains(startNode), () -> message.get().appendHead("The returned list contains the startNode"), false);
-        assertEqualsTutor(expected.size(), actual.size(), () -> message.get().appendHead("The returned list did not return the correct amount of nodes"), false);
+        assertEqualsTutor(expected.size(), actual.size(), () -> message.get().appendHead("The returned list did not return the correct amount of nodes"));
         for (NodePointer<Integer, Integer> node : expected) {
             assertTrueTutor(actual.contains(node), () -> message.get().appendHead(
                 "The returned list does not contain the node %s".formatted(Objects.toString(node))), false);
             assertEqualsTutor(expectedDistance.get(node), node.getDistance(), () -> message.get().appendHead(
-                "The distance of node %s does not have the correct value".formatted(Objects.toString(node))), false);
+                "The distance of node %s does not have the correct value".formatted(Objects.toString(node))));
             assertEqualsTutor(expectedPredecessor.get(node), node.getPredecessor(), () -> message.get().appendHead(
-                "The predecessor of node %s does not have the correct value".formatted(Objects.toString(node))), false);
+                "The predecessor of node %s does not have the correct value".formatted(Objects.toString(node))));
         }
     }
 
