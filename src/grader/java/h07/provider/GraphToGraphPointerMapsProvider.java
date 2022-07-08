@@ -34,20 +34,21 @@ public class GraphToGraphPointerMapsProvider implements ArgumentsProvider {
                 for (GraphNode<Integer> node : graph.getNodes()) {
                     for (GraphArc<Integer> arc : node.getOutgoingArcs()) {
                         ArcPointerGraph<Integer, Integer> mock = spy(new ArcPointerGraph<>(existingNodePointers, existingArcPointers, arc));
-                        when(mock.getLength()).thenReturn(arc.getLength());
-                        when(mock.destination()).thenReturn(existingNodePointers.get(arc.getDestination()));
+                        doReturn(arc.getLength()).when(mock).getLength();
+                        doReturn(existingNodePointers.get(arc.getDestination())).when(mock).destination();
                         existingArcPointers.put(arc, mock);
                     }
                 }
 
                 //mock outgoingArcs method
                 for (GraphNode<Integer> node : graph.getNodes()) {
-                    when(existingNodePointers.get(node).outgoingArcs()).thenReturn(
-                        new ArrayList<ArcPointer<Integer, Integer>>(
+                    NodePointerGraph<Integer, Integer> mock = existingNodePointers.get(node);
+                    doReturn(new ArrayList<ArcPointer<Integer, Integer>>(
                             node.getOutgoingArcs().stream()
                                 .map(existingArcPointers::get)
                                 .toList())
-                            .iterator());
+                            .iterator())
+                        .when(mock).outgoingArcs();
                 }
 
                 //set fields of mocked nodePointers

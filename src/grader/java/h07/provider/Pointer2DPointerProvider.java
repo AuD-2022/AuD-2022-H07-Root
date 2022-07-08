@@ -45,8 +45,8 @@ public class Pointer2DPointerProvider implements ArgumentsProvider {
                     double length = Math.sqrt(Math.pow(from.getX() - to.getX(), 2) + Math.pow(from.getY() - to.getY(), 2));
                     if (length > MAX_ARC_LENGTH_POINT) continue;
                     ArcPointerPoint2D mock = spy(new ArcPointerPoint2D(existingNodePointers, existingArcPointers, from, to, collection));
-                    when(mock.getLength()).thenReturn(length);
-                    when(mock.destination()).thenReturn(existingNodePointers.get(to));
+                    doReturn(length).when(mock).getLength();
+                    doReturn(existingNodePointers.get(to)).when(mock).destination();
                     existingArcPointers.put(new Pair<>(from, to), mock);
                 }
             }
@@ -59,7 +59,7 @@ public class Pointer2DPointerProvider implements ArgumentsProvider {
                 List<ArcPointer<Double, Double>> outgoingArcs = otherPoints.stream()
                     .filter(destination -> existingArcPointers.containsKey(new Pair<>(point, destination)))
                     .map(destination -> (ArcPointer<Double, Double>) existingArcPointers.get(new Pair<>(point, destination))).toList();
-                when(mock.outgoingArcs()).thenReturn(outgoingArcs.iterator());
+                doReturn(outgoingArcs.iterator()).when(mock).outgoingArcs();
             }
 
 

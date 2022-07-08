@@ -38,8 +38,8 @@ public class GraphToAdjacencyMatrixPointerProvider implements ArgumentsProvider 
                     for (int destination = 0; destination < matrix[node].length; destination++) {
                         if (matrix[node][destination] == null) continue;
                         ArcPointerAdjacencyMatrix<Integer, Integer> mock = spy(new ArcPointerAdjacencyMatrix<>(existingNodePointers, existingArcPointers, adjacencyMatrix, node, destination));
-                        when(mock.getLength()).thenReturn(matrix[node][destination]);
-                        when(mock.destination()).thenReturn(existingNodePointers.get(node));
+                        doReturn(matrix[node][destination]).when(mock).getLength();
+                        doReturn(existingNodePointers.get(node)).when(mock).destination();
                         existingArcPointers.put(new Pair<>(node, destination), mock);
                     }
                 }
@@ -48,11 +48,12 @@ public class GraphToAdjacencyMatrixPointerProvider implements ArgumentsProvider 
                 for (int node = 0; node < matrix.length; node++) {
                     NodePointerAdjacencyMatrix<Integer, Integer> mock = existingNodePointers.get(node);
                     int finalNode = node;
-                    when(mock.outgoingArcs()).thenReturn(Arrays.stream(matrix[node])
+                    doReturn(Arrays.stream(matrix[node])
                         .filter(Objects::nonNull)
                         .map(destination -> (ArcPointer<Integer, Integer>) existingArcPointers.get(new Pair<>(finalNode, destination)))
                         .toList()
-                        .iterator());
+                        .iterator())
+                        .when(mock).outgoingArcs();
                 }
 
 

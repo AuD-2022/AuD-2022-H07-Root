@@ -286,7 +286,7 @@ public class DijkstraTest {
 
         Dijkstra<Integer, Integer> dijkstra = createInstance();
 
-        when(dijkstra.finished(any(NodePointer.class))).thenReturn(true);
+        doReturn(true).when(dijkstra).finished(any(NodePointer.class));
 
         NodePointerImpl startNode = nodePointers.get(0);
         startNode.setDistance(10);
@@ -310,7 +310,7 @@ public class DijkstraTest {
         HashMap<NodePointer<Integer, Integer>, NodePointer<Integer, Integer>> expectedPredecessor = new HashMap<>();
         List<NodePointer<Integer, Integer>> expected = getExpectedResult(expectedDistance, expectedPredecessor, startNode, nodePointers, null);
 
-        when(dijkstra.finished(any(NodePointer.class))).thenAnswer(invocation -> invocation.getArgument(0) == null);
+        doAnswer(invocation -> invocation.getArgument(0) == null).when(dijkstra).finished(any(NodePointer.class));
 
         dijkstra.initialize(startNode);
         List<NodePointer<Integer, Integer>> actual = dijkstra.run();
