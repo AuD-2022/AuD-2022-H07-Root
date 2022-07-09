@@ -617,6 +617,10 @@ public class PublicTests {
 
         private static final Point2DCollection point2DCollection = new Point2DCollection(getPoints(), 1);
 
+        private final HashMap<Point2D, NodePointerPoint2D> existingNodePointers = new HashMap<>();
+
+        private final HashMap<Pair<Point2D, Point2D>, ArcPointerPoint2D> existingArcPointers = new HashMap<>();
+
         private static List<Point2D> getPoints() {
             var points = new ArrayList<Point2D>();
 
@@ -630,8 +634,8 @@ public class PublicTests {
         }
 
         private final NodePointerPoint2D pointer = new NodePointerPoint2D(
-            new HashMap<>(),
-            new HashMap<>(),
+            existingNodePointers,
+            existingArcPointers,
             point2DCollection.getPoints().get(0),
             point2DCollection);
 
@@ -639,16 +643,20 @@ public class PublicTests {
         void testConstructorAndOutgoingArcs() {
             var arcs = pointer.outgoingArcs();
 
-            ArcPointerPoint2DTest.assertArcs(arcs, 2);
+            assertPoint2DArcs(arcs, 2, existingNodePointers.values(), existingArcPointers.values());
         }
     }
 
     @Nested
     class ArcPointerPoint2DTest {
 
+        private final HashMap<Point2D, NodePointerPoint2D> existingNodePointers = new HashMap<>();
+
+        private final HashMap<Pair<Point2D, Point2D>, ArcPointerPoint2D> existingArcPointers = new HashMap<>();
+
         private final ArcPointerPoint2D pointer = new ArcPointerPoint2D(
-            new HashMap<>(),
-            new HashMap<>(),
+            existingNodePointers,
+            existingArcPointers,
             NodePointerPoint2DTest.point2DCollection.getPoints().get(0),
             NodePointerPoint2DTest.point2DCollection.getPoints().get(1),
             NodePointerPoint2DTest.point2DCollection);
@@ -664,17 +672,19 @@ public class PublicTests {
 
             var arcs = dest.outgoingArcs();
 
-            assertArcs(arcs, 3);
+            assertPoint2DArcs(arcs, 3, existingNodePointers.values(), existingArcPointers.values());
+        }
+    }
+
+    private static void assertPoint2DArcs(Iterator<ArcPointer<Double, Double>> arcs, int numberOfArcs, Collection<? extends NodePointer<Double, Double>> existingNodePointers, Collection<? extends ArcPointer<Double, Double>> existingArcPointers) {
+        for (int i = 0; i < numberOfArcs; i++) {
+            var arc = arcs.next();
+            assertTrue(existingArcPointers.contains(arc));
+            assertTrue(existingNodePointers.contains(arc.destination()));
+            assertEquals(1, arc.getLength());
         }
 
-        private static void assertArcs(Iterator<ArcPointer<Double, Double>> arcs, int numberOfArcs) {
-            for (int i = 0; i < numberOfArcs; i++) {
-                var arc = arcs.next();
-                assertEquals(1, arc.getLength());
-            }
-
-            assertFalse(arcs.hasNext());
-        }
+        assertFalse(arcs.hasNext());
     }
 
     private static class MockGraph {
