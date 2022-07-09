@@ -217,6 +217,7 @@ public class PublicTests {
         }
 
         protected abstract Q newEmptyQueue();
+
         protected abstract Iterable<Integer> queueToIterable(Q queue);
     }
 
@@ -287,10 +288,15 @@ public class PublicTests {
         @Test
         void testConstructorAndGetters() {
             var arcFromDtoC = getArcFromCtoD();
-            assertArcFromDToC(arcFromDtoC);
+            assertTrue(getExistingArcPointers().contains(arcFromDtoC));
+            assertArcFromDToC(arcFromDtoC, getExistingNodePointers(), getExistingArcPointers());
         }
 
         protected abstract ArcPointer<Integer, Integer> getArcFromCtoD();
+
+        protected abstract Collection<? extends NodePointer<Integer, Integer>> getExistingNodePointers();
+
+        protected abstract Collection<? extends ArcPointer<Integer, Integer>> getExistingArcPointers();
     }
 
     public abstract static class AbstractNodePointerTest {
@@ -298,19 +304,27 @@ public class PublicTests {
         @Test
         void testOutgoingArcs() {
             var nodeD = getNodeD();
+            assertTrue(getExistingNodePointers().contains(nodeD));
+
             var arcs = nodeD.outgoingArcs();
-            assertArcFromDToC(arcs.next());
+            assertArcFromDToC(arcs.next(), getExistingNodePointers(), getExistingArcPointers());
             assertFalse(arcs.hasNext());
         }
 
         protected abstract NodePointer<Integer, Integer> getNodeD();
+
+        protected abstract Collection<? extends NodePointer<Integer, Integer>> getExistingNodePointers();
+
+        protected abstract Collection<? extends ArcPointer<Integer, Integer>> getExistingArcPointers();
     }
 
-    private static void assertArcFromDToC(ArcPointer<Integer, Integer> arc) {
+    private static void assertArcFromDToC(ArcPointer<Integer, Integer> arc, Collection<? extends NodePointer<Integer, Integer>> existingNodePointers, Collection<? extends ArcPointer<Integer, Integer>> existingArcPointers) {
+        assertTrue(existingArcPointers.contains(arc));
         assertEquals(8, arc.getLength());
 
         var dest = arc.destination();
         assertNull(dest.getPredecessor());
+        assertTrue(existingNodePointers.contains(dest));
 
         var arcs = dest.outgoingArcs();
 
@@ -321,31 +335,63 @@ public class PublicTests {
     @Nested
     class ArcPointerAdjacencyMatrixTest extends AbstractArcPointerTest {
 
+        private final HashMap<Integer, NodePointerAdjacencyMatrix<Integer, Integer>> existingNodePointers = new HashMap<>();
+
+        private final HashMap<Pair<Integer, Integer>, ArcPointerAdjacencyMatrix<Integer, Integer>> existingArcPointers = new HashMap<>();
+
         @Override
         protected ArcPointer<Integer, Integer> getArcFromCtoD() {
             return new ArcPointerAdjacencyMatrix<>(
-                new HashMap<>(),
-                new HashMap<>(),
+                existingNodePointers,
+                existingArcPointers,
                 new AdjacencyMatrix<>(adjacencyMatrix),
                 Node.D.ordinal(), Node.C.ordinal());
+        }
+
+        @Override
+        protected Collection<? extends NodePointer<Integer, Integer>> getExistingNodePointers() {
+            return existingNodePointers.values();
+        }
+
+        @Override
+        protected Collection<? extends ArcPointer<Integer, Integer>> getExistingArcPointers() {
+            return existingArcPointers.values();
         }
     }
 
     @Nested
     class NodePointerAdjacencyMatrixTest extends AbstractNodePointerTest {
 
+        private final HashMap<Integer, NodePointerAdjacencyMatrix<Integer, Integer>> existingNodePointers = new HashMap<>();
+
+        private final HashMap<Pair<Integer, Integer>, ArcPointerAdjacencyMatrix<Integer, Integer>> existingArcPointers = new HashMap<>();
+
         @Override
         protected NodePointer<Integer, Integer> getNodeD() {
             return new NodePointerAdjacencyMatrix<>(
-                new HashMap<>(),
-                new HashMap<>(),
+                existingNodePointers,
+                existingArcPointers,
                 new AdjacencyMatrix<>(adjacencyMatrix),
                 Node.D.ordinal());
+        }
+
+        @Override
+        protected Collection<? extends NodePointer<Integer, Integer>> getExistingNodePointers() {
+            return existingNodePointers.values();
+        }
+
+        @Override
+        protected Collection<? extends ArcPointer<Integer, Integer>> getExistingArcPointers() {
+            return existingArcPointers.values();
         }
     }
 
     @Nested
     class ArcPointerGraphTest extends AbstractArcPointerTest {
+
+        private final HashMap<GraphNode<Integer>, NodePointerGraph<Integer, Integer>> existingNodePointers = new HashMap<>();
+
+        private final HashMap<GraphArc<Integer>, ArcPointerGraph<Integer, Integer>> existingArcPointers = new HashMap<>();
 
         @Override
         protected ArcPointer<Integer, Integer> getArcFromCtoD() {
@@ -355,18 +401,45 @@ public class PublicTests {
                 .get(0);
 
             return new ArcPointerGraph<>(
-                new HashMap<>(),
-                new HashMap<>(),
+                existingNodePointers,
+                existingArcPointers,
                 arc);
+        }
+
+        @Override
+        public Collection<? extends NodePointer<Integer, Integer>> getExistingNodePointers() {
+            return existingNodePointers.values();
+        }
+
+        @Override
+        protected Collection<? extends ArcPointer<Integer, Integer>> getExistingArcPointers() {
+            return existingArcPointers.values();
         }
     }
 
     @Nested
     class NodePointerGraphTest extends AbstractNodePointerTest {
 
+        private final HashMap<GraphNode<Integer>, NodePointerGraph<Integer, Integer>> existingNodePointers = new HashMap<>();
+
+        private final HashMap<GraphArc<Integer>, ArcPointerGraph<Integer, Integer>> existingArcPointers = new HashMap<>();
+
         @Override
         protected NodePointer<Integer, Integer> getNodeD() {
-            return Node.D.nodePointer();
+            return new NodePointerGraph<>(
+                existingNodePointers,
+                existingArcPointers,
+                Node.D.graphNode());
+        }
+
+        @Override
+        protected Collection<? extends NodePointer<Integer, Integer>> getExistingNodePointers() {
+            return existingNodePointers.values();
+        }
+
+        @Override
+        protected Collection<? extends ArcPointer<Integer, Integer>> getExistingArcPointers() {
+            return existingArcPointers.values();
         }
     }
 
