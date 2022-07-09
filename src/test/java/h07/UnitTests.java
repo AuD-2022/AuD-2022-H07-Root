@@ -98,6 +98,36 @@ public class UnitTests {
         Assertions.assertArrayEquals(new Integer[]{}, list.toArray());
     }
 
+    class Container<T> {
+        private T item;
+
+        public Container(T item) {
+            this.item = item;
+        }
+
+        public T getItem() {
+            return item;
+        }
+
+        public void setItem(T item) {
+            this.item = item;
+        }
+    }
+
+    @Test
+    public void priorityQueueHeapGetPosition() {
+        PriorityQueueHeap<Container<Integer>> priorityQueueHeap = new PriorityQueueHeap<>(Comparator.comparingInt(Container::getItem),10);
+        Container<Integer> a = new Container<>(1);
+        Container<Integer> b = new Container<>(1);
+        Container<Integer> c = new Container<>(1);
+        priorityQueueHeap.add(a);
+        priorityQueueHeap.add(b);
+        priorityQueueHeap.add(c);
+        Assertions.assertEquals(1, priorityQueueHeap.getPosition(a));
+        Assertions.assertEquals(2, priorityQueueHeap.getPosition(b));
+        Assertions.assertEquals(3, priorityQueueHeap.getPosition(c));
+    }
+
     @Test
     public void adjacencyMatrix() {
         Double[][] matrix = {

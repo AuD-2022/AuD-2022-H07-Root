@@ -129,7 +129,8 @@ public class PriorityQueueHeap<T> implements IPriorityQueue<T> {
         if (indexMap.containsKey(item)) {
             int position = 1;
             for (int i = 0; i < size; i++) {
-                if (priorityComparator.compare(item, heap[i]) < 0) {
+                if (priorityComparator.compare(item, heap[i]) < 0 ||
+                    priorityComparator.compare(item, heap[i]) == 0 && i < indexMap.get(item)) {
                     position++;
                 }
             }
