@@ -16,14 +16,13 @@ import java.util.List;
 
 import static h07.Assertions.*;
 import static h07.TestConstants.MAX_ARC_LENGTH_POINT;
-import static h07.TestConstants.POINTS_COUNT;
-import static org.junit.jupiter.api.Assertions.*;
+import static h07.TestConstants.POINTS_COUNT_COLLECTION_TEST;
 
 @TestForSubmission("h07")
 public class Point2DCollectionTest {
 
     private static final Pair<String, String> CONSTRUCTOR_DESCRIPTION = new Pair<>("[[[this]]]", "[[[new Point2DCollection(%d, (%d,%d), (%d,%d), %d]]]"
-        .formatted(POINTS_COUNT, 0,0,10,10,MAX_ARC_LENGTH_POINT));
+        .formatted(POINTS_COUNT_COLLECTION_TEST, 0,0,10,10,MAX_ARC_LENGTH_POINT));
 
     @BeforeEach
     public void reset() {
@@ -44,9 +43,9 @@ public class Point2DCollectionTest {
         Point2D from = new Point2D(0, 0);
         Point2D to = new Point2D(10, 10);
 
-        List<Double> values = new ArrayList<>(POINTS_COUNT*2);
+        List<Double> values = new ArrayList<>(POINTS_COUNT_COLLECTION_TEST*2);
 
-        Point2DCollection collection = new Point2DCollection(POINTS_COUNT, from, to, MAX_ARC_LENGTH_POINT);
+        Point2DCollection collection = new Point2DCollection(POINTS_COUNT_COLLECTION_TEST, from, to, MAX_ARC_LENGTH_POINT);
 
         assertEqualsTutor((double) MAX_ARC_LENGTH_POINT, getMaxArcLength(collection), () ->
             new AssertionMessage("the attribute [[[maxArcLength]]] does not have the correct value",
@@ -58,7 +57,7 @@ public class Point2DCollectionTest {
         assertNotNullTutor(actualPoints, () -> new AssertionMessage("the list [[[points]]] is null",
             List.of(CONSTRUCTOR_DESCRIPTION)));
 
-        assertEqualsTutor(POINTS_COUNT, actualPoints.size(), () ->
+        assertEqualsTutor(POINTS_COUNT_COLLECTION_TEST, actualPoints.size(), () ->
             new AssertionMessage("the list [[[points]]] does not have the correct size",
                 List.of(CONSTRUCTOR_DESCRIPTION))
         );

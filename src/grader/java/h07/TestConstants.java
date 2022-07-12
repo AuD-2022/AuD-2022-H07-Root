@@ -21,7 +21,8 @@ public class TestConstants {
     public static final int MAX_PATH_LENGTH = 50;
 
     //Points
-    public static final int POINTS_COUNT = 25;
+    public static final int POINTS_COUNT_COLLECTION_TEST = 25;
+    public static final int POINTS_COUNT = 5;
     public static final int MAX_ARC_LENGTH_POINT = 10;
     public static final int MIN_CORD = -10;
     public static final int MAX_CORD = 10;
