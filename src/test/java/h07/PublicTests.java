@@ -479,7 +479,7 @@ public class PublicTests {
         private static final Comparator<Integer> CMP = (a, b) ->
             Integer.compare(b, a);
 
-        private final Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, Integer::sum, PriorityQueueList::new);
+        private final Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(CMP, Integer::sum, (comp) -> new PriorityQueueHeap<>(comp,10));
 
         private final NodePointer<Integer, Integer> startNode = Node.A.nodePointer();
 
@@ -669,7 +669,6 @@ public class PublicTests {
         @Test
         void testDestination() {
             var dest = pointer.destination();
-
             var arcs = dest.outgoingArcs();
 
             assertPoint2DArcs(arcs, 3, existingNodePointers.values(), existingArcPointers.values());
