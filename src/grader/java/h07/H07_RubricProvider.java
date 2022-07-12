@@ -125,7 +125,7 @@ public class H07_RubricProvider implements RubricProvider {
         () -> DijkstraTest.class.getDeclaredMethod("testUpdateVisitedNode"));
 
     private static final Criterion H4_5 = DEFAULT_CRITERION.apply("Der Algorithmus terminiert korrekt, wenn das Predicate für einen Knoten true liefert.",
-        () -> DijkstraTest.class.getDeclaredMethod("testTerminate", List.class));
+        () -> DijkstraTest.class.getDeclaredMethod("testTerminate"));
 
     private static final Criterion H4_6 = DEFAULT_CRITERION.apply("Die gefundenen Knoten werden korrekt zurückgegeben.",
         () -> DijkstraTest.class.getDeclaredMethod("testWithoutPredicate", List.class));
@@ -134,6 +134,7 @@ public class H07_RubricProvider implements RubricProvider {
         .shortDescription("Die Klasse Dijkstra<L, D> ist vollständig korrekt implementiert.")
         .grader(Grader.testAwareBuilder()
             .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testConstructor")))
+            .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testTerminate")))
             .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testWithoutPredicate", List.class)))
             .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testDijkstra", List.class)))
             .pointsFailedMin()

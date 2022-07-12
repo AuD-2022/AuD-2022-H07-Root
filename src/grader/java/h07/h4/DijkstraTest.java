@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.exceptions.base.MockitoAssertionError;
 import org.sourcegrade.jagr.api.rubric.TestForSubmission;
 
 import java.lang.reflect.Field;
@@ -280,20 +281,24 @@ public class DijkstraTest {
     }
 
     @SuppressWarnings("unchecked")
-    @ParameterizedTest
-    @ArgumentsSource(GraphToNodePointerImplProvider.class)
-    public void testTerminate(List<NodePointerImpl> nodePointers) throws NoSuchFieldException, IllegalAccessException {
+    @Test
+    public void testTerminate() throws NoSuchFieldException, IllegalAccessException {
 
         Dijkstra<Integer, Integer> dijkstra = createInstance();
 
         doReturn(true).when(dijkstra).finished(any(NodePointer.class));
 
-        NodePointerImpl startNode = nodePointers.get(0);
+        NodePointerImpl startNode = new NodePointerImpl();
         startNode.setDistance(10);
+        getPriorityQueue(dijkstra).add(startNode);
 
-        dijkstra.initialize(startNode);
         dijkstra.run();
-        verify(dijkstra, never().description("Expected no call to method expandNode when [[[finished((NodePointer<L, D>)]]] always returns false but received at least one")).expandNode(any(NodePointer.class));
+
+        try {
+            verify(dijkstra, never()).expandNode(any(NodePointer.class));
+        } catch (MockitoAssertionError error) {
+            fail("Expected no call to [[[expandNode(NodePointer<L,D>)]]] after calling [[[run()]]] when [[[finished((NodePointer<L, D>)]]] always returns false but received at least one");
+        }
     }
 
     @SuppressWarnings("unchecked")
