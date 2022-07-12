@@ -40,7 +40,11 @@ public class PriorityQueueHeapTest {
 
     @AfterEach
     public void checkIllegalMethods() {
-        IllegalMethodsCheck.checkMethods("^java/util/Comparator.+", "^java/util/HashMap.+");
+        IllegalMethodsCheck.checkMethods(
+            "^java/util/Comparator.+",
+            "^java/util/HashMap.+",
+            "^java/util/Arrays.+"
+        );
     }
 
     @Test
