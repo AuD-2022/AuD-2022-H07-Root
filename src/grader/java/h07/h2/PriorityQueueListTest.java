@@ -25,8 +25,7 @@ import java.util.*;
 public class PriorityQueueListTest {
 
     private static final String STANDARD_INITIALIZE_STRING = "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]], " +
-        "%d items have been added to the [[[queue]]] to simulate calls to [[[add(T)]]], ".formatted(LIST_SIZE) +
-        "the [[[priorityComparator]]] has been set manually";
+        "%d items have been added to the [[[queue]]] to simulate calls to [[[add(T)]]], ".formatted(LIST_SIZE);
 
     @BeforeEach
     public void reset() {
@@ -345,16 +344,9 @@ public class PriorityQueueListTest {
         queueList.set(queue, list);
     }
 
-    private void setComparator(PriorityQueueList<QueueEntry> queue) throws IllegalAccessException, NoSuchFieldException {
-        Field comparatorField = PriorityQueueList.class.getDeclaredField("priorityComparator");
-        comparatorField.setAccessible(true);
-        comparatorField.set(queue, QueueEntry.QUEUE_ENTRY_CMP);
-    }
-
     private PriorityQueueList<QueueEntry> initializeQueue(List<QueueEntry> list) throws NoSuchFieldException, IllegalAccessException {
         PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(QUEUE_ENTRY_CMP);
         setQueueList(queue, new LinkedList<>(list));
-        setComparator(queue);
         return queue;
     }
 

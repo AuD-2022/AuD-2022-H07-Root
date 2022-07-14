@@ -360,14 +360,6 @@ public class DijkstraTest {
         queue.setAccessible(true);
         queue.set(dijkstra, QUEUE_FACTORY.apply((o1, o2) -> NODE_CMP.compare(o1.getDistance(), o2.getDistance())));
 
-        Field comparator = Dijkstra.class.getDeclaredField("comparator");
-        comparator.setAccessible(true);
-        comparator.set(dijkstra, NODE_CMP);
-
-        Field distanceFunction = Dijkstra.class.getDeclaredField("distanceFunction");
-        distanceFunction.setAccessible(true);
-        distanceFunction.set(dijkstra, DISTANCE_FUNCTION);
-
         return dijkstra;
 }
 

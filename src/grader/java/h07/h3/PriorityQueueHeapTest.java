@@ -16,7 +16,6 @@ import org.sourcegrade.jagr.api.rubric.TestForSubmission;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static h07.Assertions.*;
 import static h07.implementation.QueueEntry.QUEUE_ENTRY_CMP;
@@ -29,8 +28,7 @@ public class PriorityQueueHeapTest {
 
     private static final String STANDARD_INITIALIZE_STRING =
         "[[[new PriorityQueueHeap<>(Comparator.comparingInt(queueEntry -> queueEntry.value %% 10), %d)]]], ".formatted(HEAP_CAPACITY) +
-            "the [[[heap]]], [[[indexMap]]] and [[[size]]] have been modified to simulate %d calls to [[[add(T)]]], ".formatted(HEAP_CAPACITY / 2) +
-            "the [[[priorityComparator]]] has been set manually";
+            "the [[[heap]]], [[[indexMap]]] and [[[size]]] have been modified to simulate %d calls to [[[add(T)]]], ".formatted(HEAP_CAPACITY / 2);
 
     @BeforeEach
     public void reset() {
@@ -446,7 +444,6 @@ public class PriorityQueueHeapTest {
         setHeap(queue, actualHeap);
         setSize(queue, expectedQueue.size());
         setIndexMap(queue, new HashMap<>(expectedQueue.getIndexMap()));
-        setComparator(queue, QUEUE_ENTRY_CMP);
 
         return queue;
     }
@@ -457,21 +454,8 @@ public class PriorityQueueHeapTest {
         setHeap(queue, new QueueEntry[HEAP_CAPACITY]);
         setSize(queue, 0);
         setIndexMap(queue, new HashMap<>());
-        setComparator(queue, QUEUE_ENTRY_CMP);
 
         return queue;
-    }
-
-    public static void setComparator(PriorityQueueHeap<QueueEntry> queue, Comparator<QueueEntry> comparator) throws NoSuchFieldException, IllegalAccessException {
-        Field field = PriorityQueueHeap.class.getDeclaredField("priorityComparator");
-        field.setAccessible(true);
-        field.set(queue, comparator);
-    }
-
-    public static int getSize(PriorityQueueHeap<QueueEntry> queue) throws NoSuchFieldException, IllegalAccessException {
-        Field field = PriorityQueueHeap.class.getDeclaredField("size");
-        field.setAccessible(true);
-        return (int) field.get(queue);
     }
 
     public static void setSize(PriorityQueueHeap<QueueEntry> queue, int size) throws NoSuchFieldException, IllegalAccessException {
