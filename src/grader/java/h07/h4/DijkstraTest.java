@@ -201,6 +201,7 @@ public class DijkstraTest {
         NodePointerImpl currentNode = new NodePointerImpl(5).setName("currentNode");
         NodePointerImpl visitedNode = new NodePointerImpl(20).setName("visitedNode");
         NodePointerImpl otherNode = new NodePointerImpl(15).setName("otherNode");
+        NodePointerImpl unrelatedNode = new NodePointerImpl(18).setName("unrelatedNode");
 
         currentNode.addOutgoingArc(new ArcPointerImpl(10, visitedNode));
         visitedNode.setPredecessor(otherNode);
@@ -210,33 +211,47 @@ public class DijkstraTest {
         NodePointerImpl originalCurrentNode = currentNode.clone();
         NodePointerImpl originalVisitedNode = visitedNode.clone();
         NodePointerImpl originalOtherNode = otherNode.clone();
+        NodePointerImpl originalUnrelatedNode = unrelatedNode.clone();
 
         getPriorityQueue(dijkstra).add(visitedNode);
+        getPriorityQueue(dijkstra).add(unrelatedNode);
 
         dijkstra.expandNode(currentNode);
 
         assertSameTutor(currentNode, visitedNode.getPredecessor(), () -> new AssertionMessage(
             "the attribute predecessor of [[[visitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
-            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] and [[[unrelatedNode]]] have been added to the queue"),
                 new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
                 new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
-                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()),
+                new Pair<>("[[[unrelatedNode]]]", originalUnrelatedNode.toString()))
         ));
 
         assertEqualsTutor(15, visitedNode.getDistance(), () -> new AssertionMessage(
             "the attribute distance of [[[visitedNode]]] does not have the correct value after calling [[[expandNode(NodePointer<L,D>)]]]",
-            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] and [[[unrelatedNode]]] have been added to the queue"),
                 new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
                 new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
-                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()),
+                new Pair<>("[[[unrelatedNode]]]", originalUnrelatedNode.toString()))
         ));
 
         assertTrueTutor(getPriorityQueue(dijkstra).contains(visitedNode), () -> new AssertionMessage(
             "the queue does not contain [[[visitedNode]]] after calling [[[expandNode(NodePointer<L,D>)]]]",
-            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] has been added to the queue"),
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] and [[[unrelatedNode]]] have been added to the queue"),
                 new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
                 new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
-                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()))
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()),
+                new Pair<>("[[[unrelatedNode]]]", originalUnrelatedNode.toString()))
+        ));
+
+        assertEqualsTutor(0, getPriorityQueue(dijkstra).getIndexMap().get(visitedNode), () -> new AssertionMessage(
+            "the position of [[[visitedNode]]] in the queue hasn't been updated after calling [[[expandNode(NodePointer<L,D>)]]]",
+            List.of(new Pair<>("[[[this]]]", CONSTRUCTOR_DESCRIPTION + ". The [[[visitedNode]]] and [[[unrelatedNode]]] have been added to the queue"),
+                new Pair<>("Argument #1 - [[[currentNode]]]", originalCurrentNode.toString()),
+                new Pair<>("[[[visitedNode]]]", originalVisitedNode.toString()),
+                new Pair<>("[[[otherNode]]]", originalOtherNode.toString()),
+                new Pair<>("[[[unrelatedNode]]]", originalUnrelatedNode.toString()))
         ));
 
         //test do not update distance
