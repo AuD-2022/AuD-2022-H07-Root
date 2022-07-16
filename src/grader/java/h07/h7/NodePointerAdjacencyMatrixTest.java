@@ -120,7 +120,7 @@ public class NodePointerAdjacencyMatrixTest extends AdjacencyMatrixPointerTest {
 
         assertListContainsAllWithPredicate(expectedOutgoingArcs, actualOutgoingArcs,
             (ArcPointerAdjacencyMatrix<Integer, Integer> expected, ArcPointerAdjacencyMatrix<Integer, Integer> actual) -> expected == actual,
-            "the list returned by outgoingArcs()", () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct arcs",
+            "iterator returned by outgoingArcs()", () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct arcs",
                 List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
                     new kotlin.Pair<>("[[[row]]]", "the index of a node whose outgoing arcs are keys of the [[[existingArcPointers]]] map")))
         );

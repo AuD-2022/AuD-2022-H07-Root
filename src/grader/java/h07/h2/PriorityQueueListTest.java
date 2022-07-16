@@ -258,7 +258,7 @@ public class PriorityQueueListTest {
 
     private List<QueueEntry> testAddAll(PriorityQueueList<QueueEntry> queue) {
         List<QueueEntry> inserted = new ArrayList<>();
-        for (int i = 0; i < HEAP_CAPACITY; i++) {
+        for (int i = 0; i < LIST_SIZE; i++) {
             QueueEntry nextElement = QueueEntry.createRandomEntry();
 
             assertFalseTutor(queue.contains(nextElement), () -> new AssertionMessage(
@@ -298,7 +298,7 @@ public class PriorityQueueListTest {
     }
 
     private void testDeleteAll(PriorityQueueList<QueueEntry> queue, List<QueueEntry> inserted) {
-        for (int i = 0; i < HEAP_CAPACITY; i++) {
+        for (int i = 0; i < LIST_SIZE; i++) {
             QueueEntry nextElement = inserted.remove(RANDOM.nextInt(inserted.size()));
 
             assertTrueTutor(queue.contains(nextElement), () -> new AssertionMessage(

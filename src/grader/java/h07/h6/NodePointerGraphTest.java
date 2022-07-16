@@ -114,7 +114,7 @@ public class NodePointerGraphTest extends GraphPointerTest {
 
         assertListContainsAllWithPredicate(expectedOutgoingArcs, actualOutgoingArcs,
             (ArcPointerGraph<Integer, Integer> expected, ArcPointerGraph<Integer, Integer> actual) -> expected == actual,
-            "the list returned by [[[outgoingArcs()]]]",
+            "iterator returned by [[[outgoingArcs()]]]",
             () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct arcs",
                 List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
                     new Pair<>("[[[newGraphNode]]]", "a [[[GraphNode]]] whose outgoing arcs are keys of the [[[existingArcPointers]]] map")))

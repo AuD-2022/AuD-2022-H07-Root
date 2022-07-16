@@ -32,7 +32,7 @@ import static h07.Assertions.*;
 public class DijkstraTest {
 
     private static final String CONSTRUCTOR_DESCRIPTION = "[[[new Dijkstra(Comparator.reverseOrder(), " +
-        "(Integer a, Integer b) -> a == null ? b : a + b, " +
+        "(Integer a, Integer b) -> a + b, " +
         "cmp -> <reference implementation>(cmp)]]]";
 
 

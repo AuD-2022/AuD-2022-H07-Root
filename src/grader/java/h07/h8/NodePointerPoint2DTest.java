@@ -127,7 +127,7 @@ public class NodePointerPoint2DTest extends Point2DPointerTest{
         );
 
         assertListContainsAllWithPredicate(expectedOutgoingArcs, actualOutgoingArcs, (ArcPointerPoint2D expected, ArcPointerPoint2D actual) -> expected == actual,
-            "the list returned by [[[outgoingArcs()]]]",
+            "iterator returned by [[[outgoingArcs()]]]",
             () -> new AssertionMessage("[[[outgoingArcs()]]] did not return the correct arcs" + extendedMessage,
                 List.of(CONSTRUCTOR_DESCRIPTION, MAP_DESCRIPTION,
                     new kotlin.Pair<>("[[[point]]]", "a [[[Point]]] whose outgoing arcs are keys of the [[[existingArcPointers]]] map")))
