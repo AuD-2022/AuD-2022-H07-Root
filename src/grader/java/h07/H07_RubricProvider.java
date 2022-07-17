@@ -55,8 +55,15 @@ public class H07_RubricProvider implements RubricProvider {
             .build())
         .build();
 
-    private static final Criterion H2_4 = DEFAULT_CRITERION.apply("Die Klasse PriorityQueueList<T> ist vollständig korrekt implementiert.",
-        () -> PriorityQueueListTest.class.getDeclaredMethod("testAll"));
+    private static final Criterion H2_4 = Criterion.builder()
+        .shortDescription("Die Klasse PriorityQueueList<T> ist vollständig korrekt implementiert.")
+        .grader(Grader.testAwareBuilder()
+            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueListTest.class.getDeclaredMethod("testConstructor")))
+            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueListTest.class.getDeclaredMethod("testAll")))
+            .pointsFailedMin()
+            .pointsPassedMax()
+            .build())
+        .build();
 
     private static final Criterion H2 = Criterion.builder()
         .shortDescription("H2 | PriorityQueue als Liste")
@@ -94,7 +101,6 @@ public class H07_RubricProvider implements RubricProvider {
             .pointsPassedMax().build())
         .build();
 
-
     private static final Criterion H3_7 = DEFAULT_CRITERION.apply("Die Methode getPosition ist vollständig korrekt implementiert.",
         () -> PriorityQueueHeapTest.class.getDeclaredMethod("testGetPosition", PriorityQueueHeapImpl.class));
 
@@ -104,8 +110,14 @@ public class H07_RubricProvider implements RubricProvider {
     private static final Criterion H3_9 = DEFAULT_CRITERION.apply("Die Methode clear ist vollständig korrekt implementiert.",
         () -> PriorityQueueHeapTest.class.getDeclaredMethod("testClear", PriorityQueueHeapImpl.class));
 
-    private static final Criterion H3_10 = DEFAULT_CRITERION.apply("Die Klasse PriorityQueueHeap<T> ist vollständig korrekt implementiert.",
-        () -> PriorityQueueHeapTest.class.getDeclaredMethod("testAll"));
+    private static final Criterion H3_10 = Criterion.builder()
+        .shortDescription("Die Klasse PriorityQueueHeap<T> ist vollständig korrekt implementiert.")
+        .grader(Grader.testAwareBuilder()
+            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testConstructor")))
+            .requirePass(JUnitTestRef.ofMethod(() -> PriorityQueueHeapTest.class.getDeclaredMethod("testAll")))
+            .pointsFailedMin()
+            .pointsPassedMax().build())
+        .build();
 
     private static final Criterion H3 = Criterion.builder()
         .shortDescription("H3 | PriorityQueue als Heap")
@@ -134,9 +146,11 @@ public class H07_RubricProvider implements RubricProvider {
         .shortDescription("Die Klasse Dijkstra<L, D> ist vollständig korrekt implementiert.")
         .grader(Grader.testAwareBuilder()
             .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testConstructor")))
+            .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testInitializeWithPredicate", List.class)))
             .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testTerminate")))
+            .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testUpdateVisitedNode")))
             .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testWithoutPredicate", List.class)))
-            .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testDijkstra", List.class)))
+            .requirePass(JUnitTestRef.ofMethod(() -> DijkstraTest.class.getDeclaredMethod("testWithPredicate", List.class)))
             .pointsFailedMin()
             .pointsPassedMax().build())
         .build();

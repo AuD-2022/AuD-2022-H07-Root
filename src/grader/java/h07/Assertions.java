@@ -172,7 +172,7 @@ public class Assertions {
         for (int i = 0; i < actualHeap.length; i++) {
             int finalI = i;
             assertSameTutor(expectedHeap[i], actualHeap[i], () -> message.get().appendHead(
-                "The order of the elements in the [[[heap]]] is not correct at position [[[queue[%d] == %s]]]".formatted(finalI, actualHeap[finalI])
+                "The order of the elements in the [[[heap]]] array is not correct at position [[[queue[%d] == %s]]]".formatted(finalI, actualHeap[finalI])
             ));
         }
 
@@ -196,7 +196,7 @@ public class Assertions {
 
             if (child != null){
                 assertTrueTutor(QUEUE_ENTRY_CMP.compare(parent, child) >= 0,
-                    () -> message.get().appendHead("The Heap array does not satisfy the heap property for parent heap[%d] = %s and %s child heap[%d] = %s"
+                    () -> message.get().appendHead("The [[[heap]]] array does not satisfy the heap property for parent [[[heap[%d] = %s]]] and %s child [[[heap[%d] = %s]]]"
                         .formatted(index, parent, childIndex % 2 == 0 ? "right" : "left", childIndex, child)));
                 assertHeapProperty(heap, childIndex, message);
             }

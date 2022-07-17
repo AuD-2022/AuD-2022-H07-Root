@@ -234,64 +234,57 @@ public class PriorityQueueListTest {
         PriorityQueueList<QueueEntry> queue = new PriorityQueueList<>(QUEUE_ENTRY_CMP);
 
         assertFalseTutor(queue.contains(QueueEntry.UNUSED_ENTRY), () -> new AssertionMessage(
-            "[[[contains(T)]]] did not return the correct value when called with an item that was not in the queue",
+            "[[[contains(T)]]] did not return the correct value when the queue is empty",
             List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
                 new Pair<>("Argument #1 - [[[item]]]", "[[[unusedEntry]]]"))
         ));
 
         assertEqualsTutor(-1, queue.getPosition(QueueEntry.UNUSED_ENTRY), () -> new AssertionMessage(
-            "[[[getPosition(T)]]] did not return the correct value when called with an item that was not in the queue",
+            "[[[getPosition(T)]]] did not return the correct value when the queue is empty",
             List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
                 new Pair<>("Argument #1 - [[[item]]]", "[[[<unusedEntry>]]]"))
         ));
 
         assertNullTutor(queue.getFront(), () -> new AssertionMessage(
-            "[[[getFront()]]] did not return the correct value when called with an item that was not in the queue",
+            "[[[getFront()]]] did not return the correct value when the queue is empty",
             List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"))
+        ));
+
+        assertNullTutor(queue.deleteFront(), () -> new AssertionMessage(
+            "[[[deleteFront()]]] did not return the correct value when the queue is empty",
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"))
+        ));
+
+        assertNullTutor(queue.delete(QueueEntry.UNUSED_ENTRY), () -> new AssertionMessage(
+            "[[[delete()]]] did not return the correct value when the queue is empty",
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
+                new Pair<>("Argument #1 - [[[item]]]", "[[[<unusedEntry>]]]"))
         ));
 
         testDeleteAll(queue, testAddAll(queue));
         testAddAll(queue);
         queue.clear();
-        testAddAll(queue);
+        testDeleteFrontAll(queue, testAddAll(queue));
     }
 
     private List<QueueEntry> testAddAll(PriorityQueueList<QueueEntry> queue) {
         List<QueueEntry> inserted = new ArrayList<>();
         for (int i = 0; i < LIST_SIZE; i++) {
+            int finalI = i;
             QueueEntry nextElement = QueueEntry.createRandomEntry();
 
-            assertFalseTutor(queue.contains(nextElement), () -> new AssertionMessage(
-                "[[[contains(T)]]] did not return the correct value when called with an item that was not in the queue",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
-            ));
-
-            assertEqualsTutor(-1, queue.getPosition(nextElement), () -> new AssertionMessage(
-                "[[[getPosition(T)]]] did not return the correct value when called with an item that was not in the queue",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
-            ));
+            assertMethodsCorrectRemovedItem(queue, inserted, nextElement, i);
 
             queue.add(nextElement);
             inserted.add(nextElement);
 
-            assertTrueTutor(queue.contains(nextElement), () -> new AssertionMessage(
-                "[[[contains(T)]]] did not return the correct value",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
-            ));
-
-            assertPositionCorrect(queue.getInternalList(), nextElement, queue.getPosition(nextElement), () -> new AssertionMessage(
-                "[[[getPosition(T)]]] did not return the correct value",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
-            ));
+            assertMethodsCorrectAddedItem(queue, nextElement, i);
 
             assertPriorityListEquals(inserted, queue.getInternalList(), () -> new AssertionMessage(
-                "[[[add(T)]]] did not have the expect effect",
+                "[[[add(T)]]] did not have the expect effect after removing %d items".formatted(finalI),
                 List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))));
+                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
+            ));
         }
 
         return inserted;
@@ -299,43 +292,96 @@ public class PriorityQueueListTest {
 
     private void testDeleteAll(PriorityQueueList<QueueEntry> queue, List<QueueEntry> inserted) {
         for (int i = 0; i < LIST_SIZE; i++) {
+            int finalI = i;
             QueueEntry nextElement = inserted.remove(RANDOM.nextInt(inserted.size()));
 
-            assertTrueTutor(queue.contains(nextElement), () -> new AssertionMessage(
-                "[[[contains(T)]]] did not return the correct value",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
-            ));
-
-            assertPositionCorrect(queue.getInternalList(), nextElement, queue.getPosition(nextElement), () -> new AssertionMessage(
-                "[[[getPosition(T)]]] did not return the correct value",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
-            ));
+            assertMethodsCorrectAddedItem(queue, nextElement, i);
 
             assertEqualsTutor(nextElement, queue.delete(nextElement), () -> new AssertionMessage(
-                "[[[delete(T)]]] did not return the correct value",
+                "[[[delete(T)]]] did not return the correct value after removing %d items".formatted(finalI),
                 List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
                     new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
             ));
 
-            assertFalseTutor(queue.contains(nextElement), () -> new AssertionMessage(
-                "[[[contains(T)]]] did not return the correct value when called with an item that was removed from the queue",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
-            ));
-
-            assertEqualsTutor(-1, queue.getPosition(nextElement), () -> new AssertionMessage(
-                "[[[getPosition(T)]]] did not return the correct value when called with an item that was removed from the queue",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
-            ));
+            assertMethodsCorrectRemovedItem(queue, inserted, nextElement, i);
 
             assertPriorityListEquals(inserted, queue.getInternalList(), () -> new AssertionMessage(
-                "[[[delete(T)]]] did not have the expect effect",
-                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
-                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))));
+                "[[[delete(T)]]] did not have the expect effect after removing %d items".formatted(finalI),
+                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"))
+            ));
         }
+
+        assertNullTutor(queue.delete(QueueEntry.UNUSED_ENTRY), () -> new AssertionMessage(
+            "[[[delete()]]] did not return the correct value after removing all items",
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
+                new Pair<>("Argument #1 - [[[item]]]", "[[[<unusedEntry>]]]"))
+        ));
+    }
+
+    public void testDeleteFrontAll(PriorityQueueList<QueueEntry> queue, List<QueueEntry> inserted) {
+        for (int i = 0; i < LIST_SIZE; i++) {
+            int finalI = i;
+            QueueEntry nextElement = queue.getInternalList().get(0);
+            inserted.remove(nextElement);
+
+            assertMethodsCorrectAddedItem(queue, nextElement, i);
+
+            assertEqualsTutor(queue.getInternalList().get(0), queue.deleteFront(), () -> new AssertionMessage(
+                "[[[deleteFront()]]] did not return the correct value after removing %d items".formatted(finalI),
+                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
+                    new Pair<>("Argument #1 - [[[item]]]", nextElement.toString()))
+            ));
+
+            assertMethodsCorrectRemovedItem(queue, inserted, nextElement, i);
+
+            assertPriorityListEquals(inserted, queue.getInternalList(), () -> new AssertionMessage(
+                "[[[deleteFront()]]] did not have the expect effect after removing %d items".formatted(finalI),
+                List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"))
+            ));
+        }
+
+        assertNullTutor(queue.deleteFront(), () -> new AssertionMessage(
+            "[[[deleteFront()]]] did not have the expect effect after removing all items",
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"))
+        ));
+    }
+
+    private void assertMethodsCorrectAddedItem(PriorityQueueList<QueueEntry> queue, QueueEntry addedItem, int i) {
+        assertTrueTutor(queue.contains(addedItem), () -> new AssertionMessage(
+            "[[[contains(T)]]] did not return the correct value when called with an item that was added to the queue",
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
+                new Pair<>("Argument #1 - [[[item]]]", addedItem.toString()))
+        ));
+
+        assertPositionCorrect(queue.getInternalList(), addedItem, queue.getPosition(addedItem), () -> new AssertionMessage(
+            "[[[getPosition(T)]]] did not return the correct value when called with an item that was added to the queue",
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
+                new Pair<>("Argument #1 - [[[item]]]", addedItem.toString()))
+        ));
+
+        assertEqualsTutor(queue.getInternalList().get(0), queue.getFront(), () -> new AssertionMessage(
+            "[[[getFront()]]] did not return the correct value after adding %d items".formatted(i),
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"))
+        ));
+    }
+
+    private void assertMethodsCorrectRemovedItem(PriorityQueueList<QueueEntry> queue, List<QueueEntry> inserted, QueueEntry removedItem, int i) {
+        assertFalseTutor(queue.contains(removedItem), () -> new AssertionMessage(
+            "[[[contains(T)]]] did not return the correct value when called with an item that was removed from the queue",
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
+                new Pair<>("Argument #1 - [[[item]]]", removedItem.toString()))
+        ));
+
+        assertEqualsTutor(-1, queue.getPosition(removedItem), () -> new AssertionMessage(
+            "[[[getPosition(T)]]] did not return the correct value when called with an item that was removed from the queue",
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"),
+                new Pair<>("Argument #1 - [[[item]]]", removedItem.toString()))
+        ));
+
+        assertEqualsTutor(inserted.size() == 0 ? null : queue.getInternalList().get(0), queue.getFront(), () -> new AssertionMessage(
+            "[[[getFront()]]] did not return the correct value after removing %d items".formatted(i),
+            List.of(new Pair<>("[[[this]]]", "[[[new PriorityQueueList<>(Comparator.comparingInt(queueEntry -> queueEntry.value % 10))]]]"))
+        ));
     }
 
     private void setQueueList(PriorityQueueList<QueueEntry> queue, List<QueueEntry> list) throws IllegalAccessException, NoSuchFieldException {

@@ -344,7 +344,7 @@ public class DijkstraTest {
 
     @ParameterizedTest
     @ArgumentsSource(GraphToNodePointerImplProvider.class)
-    public void testDijkstra(List<NodePointerImpl> nodePointers) {
+    public void testWithPredicate(List<NodePointerImpl> nodePointers) {
 
         Dijkstra<Integer, Integer> dijkstra = new Dijkstra<>(NODE_CMP, DISTANCE_FUNCTION, QUEUE_FACTORY);
 
