@@ -73,7 +73,7 @@ public class Dijkstra<L, D>  {
      * Expandiert den aktuellen Knoten, wie aus Dijkstra bekannt.
      * @param currentNode Zu expandierender Knoten.
      */
-	private void expandNode(NodePointer<L, D> currentNode) {
+	public void expandNode(NodePointer<L, D> currentNode) {
 		Iterator<ArcPointer<L, D>> outgoingArcs = currentNode.outgoingArcs();
 
 		while (outgoingArcs.hasNext()) {
@@ -102,7 +102,7 @@ public class Dijkstra<L, D>  {
      * @param currentNode Der Knoten, anhand dessen überprüft wird, ob der Algorithmus terminiert.
      * @return true, falls der Algorithmus terminiert.
      */
-	private boolean finished(NodePointer<L, D> currentNode) {
+	public boolean finished(NodePointer<L, D> currentNode) {
 		return currentNode == null || (predicate != null && predicate.test(currentNode));
 	}
 }

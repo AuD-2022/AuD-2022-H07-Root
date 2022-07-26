@@ -34,6 +34,7 @@ dependencies {
         exclude("org.jetbrains", "annotations")
     }
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+    testImplementation("org.mockito:mockito-core:4.5.1")
 }
 
 application {
